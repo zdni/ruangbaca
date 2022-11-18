@@ -2,7 +2,4 @@
 Website Ruang Baca Teknik Informatika Halu Oleo
 
 ## Teknologi
-> Codeigniter
-> Laravel
-> MERN
-> GraphQL
+> Codeigniter, Laravel, MERN, GraphQL
