@@ -8,17 +8,16 @@ class Profile extends User_Controller {
         parent::__construct();
         $this->load->model([
             'users_model',
+            'civitas_model'
         ]);
 		$this->load->library('upload');
-        $this->data['menu_id'] = 'profile_user_index';
 	}
 
 	public function index()
     {
         $this->data['data'] = $this->users_model->user( $this->session->userdata('user_id') )->row();
         
-        $this->data['page'] = 'Profil';
-        $this->render('admin/user');
+        $this->render('profile');
     }
 
     public function update()
@@ -27,28 +26,36 @@ class Profile extends User_Controller {
 
         $this->form_validation->set_rules('id', 'Id Profil', 'required');
         $this->form_validation->set_rules('name', 'Nama', 'required');
-        $this->form_validation->set_rules('username', 'Username', 'required');   
 
         $alert = 'error';
         $message = 'Gagal Mengubah Profil! <br> Silahkan isi semua inputan!';
         if ( $this->form_validation->run() )
         {
             $id = $this->input->post('id');
-            $username = $this->input->post('username');
-            $username_old = $this->input->post('username_old');
+            $role_id = $this->input->post('role_id');
             $name = $this->input->post('name');
 
-            $data['username'] = $username;
             $data['name'] = $name;
+
             
             if( $this->users_model->update( $id, $data ) )
             {
+                if( $role_id == 3 ) {
+                    $civitas_id = $this->input->post('civitas_id');
+                    $status = $this->input->post('status');
+
+                    $civitas_data['id_number'] = $this->input->post('id_number');
+                    if( $status == 'student' ) $civitas_data['id_number'] = $this->input->post('id_number');
+                    
+                    if( !$this->civitas_model->update( $civitas_id, $civitas_data ) ) {
+                        $this->session->set_flashdata('alert', 'error');
+                        $this->session->set_flashdata('message', 'Gagal Mengubah Profil!');
+                        return redirect( base_url('profile') );
+                    }
+                }
+                $this->session->set_userdata('name', $name);
                 $alert = 'success';
                 $message = 'Berhasil Mengubah Profil!';
-                if( $username != $username_old ) {
-                    $message = 'Berhasil Mengubah Profil! <br> Silahkan Login ulang karena username anda berubah';
-                    $this->session->set_flashdata('logout', true);
-                }
             } else {
                 $message = 'Gagal Mengubah Profil!';
             }

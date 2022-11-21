@@ -1,86 +1,109 @@
-    <footer class="edu-footer footer-lighten bg-image footer-style-1">
+    <footer class="site-footer">
+      <div class="footer-category">
+        <div class="container">
+          <?php if( count( $categories_footer ) > 0 ): ?>
+          <div class="category-toggle">
+            <a href="javascript:void(0);" class="toggle-btn">Kategori Dokumen</a>
+            <div class="toggle-items row book-grid-row">
+              <div class="footer-col-book">
+                <ul>
+                  <?php foreach ($categories_footer as $categpry) { ?>
+                    <li><a href="<?= base_url('dashboard/documents?category=') ?>">Kategori</a></li>
+                  <?php } ?>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <?php endif; ?>
+        </div>
+      </div>
+
       <div class="footer-top">
         <div class="container">
-          <div class="row g-5">
-            <div class="col-lg-3 col-md-6">
-              <div class="edu-footer-widget">
-                <div class="logo">
-                  <a href="index.html">
-                    <img class="logo-light" src="assets/images/logo/logo.png" alt="Logo Ruang Baca">
-                    <img class="logo-dark" src="assets/images/logo/logo.png" alt="Logo Ruang Baca">
-                  </a>
-                </div>
-                <p class="description">Kampus Hijau Bumi Tridharma Andounohu Kendari, 93132 Kompleks gedung Fakultas Teknik, Universitas Halu Oleo, Jurusan Teknik Informatika</p>
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6">
-              <div class="edu-footer-widget explore-widget">
-                <h4 class="widget-title">Link Terkait</h4>
-                <div class="inner">
-                  <ul class="footer-link link-hover">
-                    <li><a href="about-one.html">About</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-2 col-sm-6">
-              <div class="edu-footer-widget quick-link-widget">
-                <h4 class="widget-title">Info Kontak</h4>
-                <div class="inner">
-                  <ul class="footer-link link-hover">
-                    <li><a href="contact-us.html">Contact Us</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-6">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="copyright-area">
-        <div class="container">
           <div class="row">
-            <div class="col-lg-12">
-              <div class="inner text-center">
-                <p>Ruang Baca Teknik Informatika Universita Halu Oleo</p>
+            <div class="col-lg-3 wow fadeInUp" data-wow-delay="0.1s">
+              <div class="widget widget_about">
+                <div class="footer-logo logo-white">
+                  <a href="index.html"><img src="<?= base_url('assets/') ?>images/logo.png" alt=""></a>
+                </div>
+                <p class="text">Website Perpustakaan Teknik Informatika Universitas Halu Oleo.
+                </p>
+              </div>
+            </div>
+            <div class="col-lg-4 wow fadeInUp" data-wow-delay="0.2s">
+              <div class="widget widget_services">
+                <h5 class="footer-title">Link Terkait</h5>
+                <ul>
+                  <?php foreach ($links as $link) { ?>
+                    <li><a target="_new" href="<?= $link->url ?>"><?= $link->label ?></a></li>
+                  <?php } ?>
+                </ul>
+              </div>
+            </div>
+            <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.5s">
+              <div class="widget widget_getintuch">
+                <h5 class="footer-title">Info Kontak</h5>
+                <ul>
+                  <li>
+                    <i class="flaticon-placeholder"></i>
+                    <span><?= $contacts[0]->file_content ?></span>
+                  </li>
+                  <li>
+                    <i class="flaticon-email"></i>
+                    <span><?= $contacts[1]->file_content ?></span>
+                  </li>
+                  <li>
+                    <i class="flaticon-phone"></i>
+                    <span><?= $contacts[2]->file_content ?></span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <div class="row fb-inner">
+            <div class="col-lg-6 col-md-12 text-start">
+              <p class="copyright-text">Ruang Baca Teknik Informatika Universitas Halu Oleo</p>
+            </div>
+            <div class="col-lg-6 col-md-12 text-end">
+              <p>2022</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </footer>
+
+    <button class="scroltop" type="button"><i class="fas fa-arrow-up"></i></button>
   </div>
 
-  <div class="rn-progress-parent">
-    <svg class="rn-back-circle svg-inner" width="100%" height="100%" viewBox="-1 -1 102 102">
-      <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" />
-    </svg>
-  </div>
+  <script src="<?= base_url('assets/') ?>js/jquery.min.js"></script>
+  <script src="<?= base_url('assets/') ?>vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="<?= base_url('assets/') ?>vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+  <script src="<?= base_url('assets/') ?>vendor/counter/waypoints-min.js"></script>
+  <script src="<?= base_url('assets/') ?>vendor/counter/counterup.min.js"></script>
+  <script src="<?= base_url('assets/') ?>vendor/wow/wow.min.js"></script>
+  <script src="<?= base_url('assets/') ?>vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="<?= base_url('assets/') ?>js/dz.carousel.js"></script>
+  <script src="<?= base_url('assets/') ?>js/dz.ajax.js"></script>
+  <script src="<?= base_url('assets/') ?>js/custom.js"></script>
+  <script src="<?= base_url('assets/') ?>vendor/sweetalert2/sweetalert2.min.js"></script>
 
-  <script src="<?= base_url('assets/') ?>js/vendor/modernizr.min.js"></script>
-  
-  <script src="<?= base_url('assets/') ?>js/vendor/jquery.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/bootstrap.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/sal.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/backtotop.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/magnifypopup.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/jquery.countdown.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/odometer.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/isotop.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/imageloaded.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/lightbox.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/paralax.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/paralax-scroll.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/jquery-ui.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/swiper-bundle.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/svg-inject.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/vivus.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/tipped.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/smooth-scroll.min.js"></script>
-  <script src="<?= base_url('assets/') ?>js/vendor/isInViewport.jquery.min.js"></script>
+  <script>
+    if( '<?= $this->session->flashdata('alert') ?>' == 'success' ) {
+      Swal.fire( 'Berhasil!', '<?= $this->session->flashdata('message') ?>', 'success' );
+    }
+    
+    if( '<?= $this->session->flashdata('alert') ?>' == 'warning' ) {
+      Swal.fire( 'Peringatan!', '<?= $this->session->flashdata('message') ?>', 'warning' );
+    }
 
-  <script src="<?= base_url('assets/') ?>js/app.js"></script>
-</body>
-
-</html>
+    if( '<?= $this->session->flashdata('alert') ?>' == 'error' ) {
+      Swal.fire( 'Gagal!', '<?= $this->session->flashdata('message') ?>', 'error' );
+    }
+    if( "<?php echo $this->session->flashdata('logout') != null ?>" ) setTimeout(() => { window.location.replace("<?= base_url('auth/logout') ?>") }, 1500);
+  </script>

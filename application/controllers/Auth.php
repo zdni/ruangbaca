@@ -15,11 +15,7 @@ class Auth extends CI_Controller {
     {
         // cek apakah user sudah login
         if( $this->session->userdata('user_id') ){
-            $role_name = $this->session->userdata('role_name');
-            if ( $role_name == 'admin' ) {
-                $path = 'admin/dashboard';
-            }
-            return redirect( base_url() . $path );
+            return redirect( base_url() );
         }
         
         $this->form_validation->set_rules('username', 'Username', 'required');
@@ -42,22 +38,13 @@ class Auth extends CI_Controller {
                         'role_id' => $user->role_id,
                         'role_name' => $user->role_name,
                         'user_image' => $user->image,
-                        'laboratory_id' => $user->laboratory_id,
                     ];
-
-                    if ( $user->role_name == 'admin' ) {
-                        $path = 'admin/dashboard';
-                    }
-
-                    if ( $user->role_name == 'uadmin' ) {
-                        $path = 'admin/laboratories';
-                    }
 
                     $this->session->set_userdata( $session );
                     $this->session->set_flashdata('alert', 'success');   
                     $this->session->set_flashdata('message', 'Login Berhasil');   
                     
-                    return redirect( base_url() . $path );
+                    return redirect( base_url() );
                 } else {
                     $alert = 'warning';
                     $message = 'Login Gagal! Password yang anda masukkan salah';
