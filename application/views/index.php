@@ -108,7 +108,11 @@
                         
                       </p> -->
                       <div class="bookcard-footer">
-                        <a href="<?= base_url('documents?id=') . $document->document_id ?>" class="btn btn-secondary btnhover m-t15 m-r10">Ajukan Peminjaman</a>
+                        <?php if( in_array( $role_id, [3] ) ): ?>
+                          <a href="<?= base_url('documents/transaction?id=') . $document->document_id . '&user_id=' . $user_id ?>" class="btn btn-secondary btnhover btnhover2 m-r10">
+                            Ajukan Peminjaman <?= $type[$document->type] ?>
+                          </a>
+                          <?php endif; ?>
                       </div>
                     </div>
                   </div>
