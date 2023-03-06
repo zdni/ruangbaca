@@ -371,7 +371,7 @@ class Documents extends Client_Controller
         $config['upload_path']          = './uploads/documents/files/';
 		$config['overwrite']            = true;
 		$config['allowed_types']        = 'pdf|doc|docx';
-		$config['max_size']             = 2048;
+		$config['max_size']             = 30720;
 		$config['file_name']			= $title;
 
 		$this->upload->initialize($config);

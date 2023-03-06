@@ -54,7 +54,7 @@
                     <div class="row" id="form-book">
                       <div class="col-md-4 form-group mb-2">
                         <label for="">Penerbit</label>
-                        <input type="text" class="form-control" name="publisher" id="publisher" required value="<?php if( $action == 'update' ) if( $document->type == 'book' ) echo $document->publisher ?>">
+                        <input type="text" class="form-control" name="publisher" id="publisher" value="<?php if( $action == 'update' ) if( $document->type == 'book' ) echo $document->publisher ?>">
                       </div>
                       <div class="col-md-4 form-group mb-2">
                         <label for="">Kategori Buku</label>
@@ -66,11 +66,11 @@
                       </div>
                       <div class="col-md-2 form-group mb-2">
                         <label for="">Tahun Terbit</label>
-                        <input type="number" class="form-control" name="publication_year" id="publication_year" required value="<?php if( $action == 'update' ) if( $document->type == 'book' ) echo $document->publication_year ?>">
+                        <input type="number" class="form-control" name="publication_year" id="publication_year" value="<?php if( $action == 'update' ) if( $document->type == 'book' ) echo $document->publication_year ?>">
                       </div>
                       <div class="col-md-2 form-group mb-2">
                         <label for="">Stok</label>
-                        <input type="number" class="form-control" name="stock" id="stock" required value="<?php if( $action == 'update' ) if( $document->type == 'book' ) echo $document->stock ?>">
+                        <input type="number" class="form-control" name="stock" id="stock" value="<?php if( $action == 'update' ) if( $document->type == 'book' ) echo $document->stock ?>">
                       </div>
                     </div>
                     
@@ -151,8 +151,6 @@
       function onchangeSelectTypeDocument(type) {
         if( type.value == 'book' ) {
           formBook.removeAttribute('style');
-          formThesis.setAttribute('style', 'display: none');
-
           for (let index = 1; index < formBook.children.length; index++) {
             const element = formBook.children[index];
             if( element.children[1].type != 'file' ) {
@@ -166,24 +164,24 @@
               element.children[1].removeAttribute('required');
             }
           }
+          formThesis.setAttribute('style', 'display: none');
         }
         if( type.value == 'thesis' ) {
           formThesis.removeAttribute('style');
-          formBook.setAttribute('style', 'display: none');
-
           for (let index = 1; index < formThesis.children.length; index++) {
             const element = formThesis.children[index];
             if( element.children[1].type != 'file' ) {
               element.children[1].setAttribute('required', 'true');
             }
           }
-
+          
           for (let index = 1; index < formBook.children.length; index++) {
             const element = formBook.children[index];
             if( element.children[1].type != 'file' ) {
               element.children[1].removeAttribute('required');
             }
           }
+          formBook.setAttribute('style', 'display: none');
         }
       }
 
