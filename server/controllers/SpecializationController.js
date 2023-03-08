@@ -22,10 +22,11 @@ class SpecializationController {
 
   async store(req, res) {
     try {
-      if(!req.body.name) { throw { code: 428, message: "Name Book is required" } }
+      const {name} = req.body
+      if(!name) { throw { code: 428, message: "Name Book is required" } }
       
       const newSpecialization = new Specialization({
-        name: req.body.name
+        name: name
       })
       const specialization = await newSpecialization.save()
       if( !specialization ) { throw { code: 500, message: "FAILED_CREATE_SPECIALIZATION" } }
@@ -45,10 +46,11 @@ class SpecializationController {
 
   async show(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
-      const specialization = await Specialization.findOne({ _id: req.params.id })
+      const specialization = await Specialization.findOne({ _id: id })
       if(!specialization) { throw { code: 404, message: "SPECIALIZATION_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -67,11 +69,11 @@ class SpecializationController {
 
   async update(req, res) {
     try {
-      if(!req.params.id) { throw { code: 420, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid( req.params.id )) { throw { code: 400, message: "INVALID_ID" } }
+      if(!id) { throw { code: 420, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid( id )) { throw { code: 400, message: "INVALID_ID" } }
 
       const specialization = await Specialization.findByIdAndUpdate(
-        { _id: req.params.id },
+        { _id: id },
         req.body,
         { new: true }
       )
@@ -92,10 +94,10 @@ class SpecializationController {
 
   async destroy(req, res) {
     try {
-      if(!req.params.id) { throw { code: 420, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid( req.params.id )) { throw { code: 400, message: "INVALID_ID" } }
+      if(!id) { throw { code: 420, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid( id )) { throw { code: 400, message: "INVALID_ID" } }
 
-      const specialization = await Specialization.findOneAndDelete({ _id: req.params.id })
+      const specialization = await Specialization.findOneAndDelete({ _id: id })
       if(!specialization) { throw { code: 500, message: "SPECIALIZATION_DELETE_FAILED" } }
 
       return res.status(200).json({

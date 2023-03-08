@@ -1,10 +1,15 @@
 import mongoose from 'mongoose'
+
 import Return from '../models/Return.js'
+import ReturnService from '../services/ReturnService.js'
 
 class ReturnController {
   async index(req, res){
     try {
-      const returns = await Return.find()
+      const processQuery = await ReturnService.processQuerySearch(req)
+      if(!processQuery.status) throw { code: data.code, message: "ERROR_QUERY_SEARCH" }
+
+      const returns = await Return.find(processQuery.query)
       if(!returns) { throw { code: 404, message: "RETURN_DATA_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -23,15 +28,10 @@ class ReturnController {
 
   async store(req, res) {
     try {
-      if(!req.body.transactionId) { throw { code: 428, message: "Transaction is required" } }
-      if(!req.body.date) { throw { code: 428, message: "Date is required" } }
+      const data = await ReturnService.processData(req)
+      if (!data.status) throw { code: data.code, message: data.message }
 
-      if(!mongoose.Types.ObjectId.isValid(req.params.transactionId)) { throw { code: 400, message: "INVALID_TRANSACTION_ID" } }
-      
-      const newReturn = new Return({
-        transactionId: req.body.transactionId,
-        date: req.body.date,
-      })
+      const newReturn = new Return(data.data)
       const returnTransaction = await newReturn.save()
       if(!returnTransaction) { throw { code: 404, message: "FAILED_CREATE_RETURN" } }
 
@@ -51,10 +51,11 @@ class ReturnController {
 
   async show(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
-      const returnTransaction = await Return.findOne({ _id: req.params.id })
+      const returnTransaction = await Return.findOne({ _id: id })
       if(!returnTransaction) { throw { code: 404, message: "RETURN_NOT_FOUND" } }
       
       return res.status(200).json({
@@ -73,11 +74,12 @@ class ReturnController {
 
   async update(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
       const returnTransaction = await Return.findByIdAndUpdate(
-        { _id: req.params.id },
+        { _id: id },
         req.body,
         { new: true }
       )
@@ -99,10 +101,11 @@ class ReturnController {
 
   async destory(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
-      const returnTransaction = await Return.findOneAndDelete({ _id: req.params.id })
+      const returnTransaction = await Return.findOneAndDelete({ _id: id })
       if(!returnTransaction) { throw { code: 500, message: "RETURN_DELETE_FAILED" } }
 
       return res.status(200).json({

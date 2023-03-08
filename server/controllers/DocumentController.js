@@ -1,10 +1,15 @@
 import mongoose from 'mongoose'
+
 import Document from '../models/Document.js'
+import DocumentService from '../services/DocumentService.js'
 
 class DocumentController {
   async index(req, res) {
     try {
-      const documents = await Document.find()
+      const processQuery = await DocumentService.processQuerySearchDocument(req)
+      if(!processQuery.status) throw { code: data.code, message: "ERROR_QUERY_SEARCH" }
+
+      const documents = await Document.find(processQuery.query)
       if(!documents) { throw { code: 404, message: "DOCUMENT_DATA_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -23,27 +28,10 @@ class DocumentController {
 
   async store(req, res) {
     try {
-      if(!req.body.code) { throw { code: 428, message: "Code Book is required" } }
-      if(!req.body.title) { throw { code: 428, message: "Title is required" } }
-      if(!req.body.writer) { throw { code: 428, message: "Writer is required" } }
-      if(!req.body.storageId) { throw { code: 428, message: "Storage is required" } }
+      const data = await DocumentService.documentDataToCreate(req)
+      if (!data.status) throw { code: data.code, message: data.message }
 
-      if(!mongoose.Types.ObjectId.isValid(req.body.storageId)) { throw { code: 400, message: "INVALID_STORAGE_ID" } }
-      if(req.body.specializationId) {
-        if(!mongoose.Types.ObjectId.isValid(req.body.specializationId)) { throw { code: 400, message: "INVALID_SPECIALIZATION_ID" } }
-      }
-      if(req.body.categoryId) {
-        if(!mongoose.Types.ObjectId.isValid(req.body.categoryId)) { throw { code: 400, message: "INVALID_CATEGORY_ID" } }
-      }
-
-      const newDocument = new Document({
-        code: req.body.code,
-        title: req.body.title,
-        writer: req.body.writer,
-        specializationId: req.body.specializationId,
-        storageId: req.body.storageId,
-        categoryId: req.body.categoryId,
-      })
+      const newDocument = new Document(data.data)
       const document = await newDocument.save()
 
       if(!document) { throw { code: 500, message: "FAILED_CREATE_DOCUMENT" } }
@@ -63,10 +51,11 @@ class DocumentController {
 
   async show(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
-      const document = await Document.findOne({ _id: req.params.id })
+      const document = await Document.findOne({ _id: id })
       if(!document) { throw { code: 404, message: "DOCUMENT_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -85,11 +74,12 @@ class DocumentController {
 
   async update(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
       
       const document = await Document.findByIdAndUpdate(
-        { _id: req.params.id },
+        { _id: id },
         req.body,
         { new: true }
       )
@@ -111,10 +101,11 @@ class DocumentController {
 
   async destroy(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
       
-      const document = await Document.findOneAndDelete({ _id: req.params.id })
+      const document = await Document.findOneAndDelete({ _id: id })
       if(!document) { throw { code: 500, message: "DOCUMENT_DELETE_FAILED" } }
 
       return res.status(200).json({

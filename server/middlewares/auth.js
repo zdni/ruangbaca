@@ -9,7 +9,7 @@ const auth = () => {
       if( req.headers.authorization ) {
         const token = req.headers.authorization.split(' ')[1]
 
-        jwt.verify(token, env.jwt_ACCESS_TOKEN_SECRET, (err, data) => {
+        jwt.verify(token, env.JWT_ACCESS_TOKEN_SECRET, (err, data) => {
           if ( err ) {
             if( err.name == 'TokenExpiredError' ) {
               throw 'TOKEN_EXPIRED'

@@ -6,7 +6,12 @@ const Schema = mongoose.Schema({
     required: true,
     ref: 'Transaction'
   },
-  penalty: { type: String, required: true },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
+  },
+  description: { type: String, required: true },
   paymentDate: { type: Date },
   status: {
     type: String,

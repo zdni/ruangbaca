@@ -6,6 +6,11 @@ const Schema = mongoose.Schema({
     required: true,
     ref: 'Transaction'
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
+  },
   date: { type: Date, required: true },
   createdAt: { type: Number },
   updatedAt: { type: Number },

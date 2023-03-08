@@ -1,12 +1,15 @@
 import mongoose from 'mongoose'
-import bcrypt from 'bcrypt'
+
 import User from '../models/User.js'
-import usernameExist from '../libraries/usernameExist.js' 
+import UserService from '../services/UserService.js'
 
 class UserController {
   async index(req, res) {
     try {
-      const users = await User.find()
+      const processQuery = UserService.processQuerySearch(req)
+      if(!processQuery.status) throw { code: data.code, message: "ERROR_QUERY_SEARCH" }
+      
+      const users = await User.find(processQuery.query)
       if(!users) { throw { code: 404, message: "USER_DATA_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -24,25 +27,10 @@ class UserController {
 
   async store(req, res) {
     try {
-      if(!req.body.idNumber) { throw { code: 428, message: "ID Number is required" } }
-      if(!req.body.name) { throw { code: 428, message: "Fullname is required" } }
-      if(!req.body.username) { throw { code: 428, message: "Username is required" } }
-      if(!req.body.password) { throw { code: 428, message: "Password is required" } }
-      if(!req.body.role) { throw { code: 428, message: "Role is required" } }
+      const data = await UserService.processData(req)
+      if (!data.status) throw { code: data.code, message: data.message }
 
-      const isUsernameExist = await usernameExist(req.body.username)
-      if(isUsernameExist) { throw { code: 409, message: "USERNAME_EXIST" } }
-      
-      let salt = await bcrypt.genSalt(10)
-      let hash = await bcrypt.hash(req.body.password, salt)
-
-      const newUser = new User({
-        name: req.body.name,
-        username: req.body.username,
-        password: hash,
-        idNumber: req.body.idNumber,
-        role: req.body.role,
-      })
+      const newUser = new User(data.data)
       const user = await newUser.save()
 
       if(!user) { throw { code: 500, message: "USER_REGISTER_FAILED" } }
@@ -63,12 +51,12 @@ class UserController {
 
   async show(req, res) {
     try {
-      if(!req.params.id && !req.jwt.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id) && !mongoose.Types.ObjectId.isValid(req.jwt.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
 
-      let user_id = mongoose.Types.ObjectId.isValid(req.params.id) ? req.params.id : req.jwt.id
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
-      const user = await User.findOne({ _id: user_id })
+      const user = await User.findOne({ _id: id })
       if(!user) { throw { code: 404, message: "USER_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -87,10 +75,11 @@ class UserController {
 
   async destroy(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
-      const user = await User.findOneAndDelete({ _id: req.params.id })
+      const user = await User.findOneAndDelete({ _id: id })
       if(!user) { throw { code: 500, message: "USER_DELETE_FAILED" } }
 
       return res.status(200).json({
@@ -108,15 +97,12 @@ class UserController {
 
   async changePassword(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
-        
-      let salt = await bcrypt.genSalt(10)
-      let hash = await bcrypt.hash(req.body.password, salt)
+      const data = await UserService.processChangePassword(req)
+      if (!data.status) throw { code: data.code, message: data.message }
 
       const user = await User.findOneAndUpdate(
-        { _id: req.params.id },
-        { password: hash },
+        { _id: id },
+        { password: data.password },
         { new: true }
       )
       if(!user) { throw { code: 500, message: "CHANGE_PASSWORD_USER_FAILED" } }
@@ -137,26 +123,20 @@ class UserController {
 
   async resetPassword(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const data = await UserService.processResetPassword(req)
+      if (!data.status) throw { code: data.code, message: data.message }
 
-      const user = await User.findOne({ _id: req.params.id })
-      if(!user) { throw { code: 404, message: "USER_NOT_FOUND" } }
-      
-      let salt = await bcrypt.genSalt(10)
-      let hash = await bcrypt.hash(user.username, salt)
-
-      const userUpdate = await User.findOneAndUpdate(
+      const user = await User.findOneAndUpdate(
         { _id: req.params.id },
-        { password: hash },
+        { password: data.password },
         { new: true }
       )
-      if(!userUpdate) { throw { code: 500, message: "RESET_PASSWORD_USER_FAILED" } }
+      if(!user) { throw { code: 500, message: "RESET_PASSWORD_USER_FAILED" } }
 
       return res.status(200).json({
         status: true,
         message: "RESET_PASSWORD_USER_SUCCESS",
-        userUpdate
+        user
       })
     } catch (err) {
       if(!err.code) { err.code = 500 }

@@ -1,10 +1,15 @@
 import mongoose from 'mongoose'
+
 import Penalty from '../models/Penalty.js'
+import PenaltyService from '../services/PenaltyService.js'
 
 class PenaltyController {
   async index(req, res){
     try {
-      const penalties = await Penalty.find()
+      const processQuery = await PenaltyService.processQuerySearch(req)
+      if(!processQuery.status) throw { code: data.code, message: "ERROR_QUERY_SEARCH" }
+      
+      const penalties = await Penalty.find(processQuery.query)
       if(!penalties) { throw { code: 404, message: "PENALTY_DATA_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -23,15 +28,10 @@ class PenaltyController {
 
   async store(req, res) {
     try {
-      if(!req.body.transactionId) { throw { code: 428, message: "Transaction is required" } }
-      if(!req.body.penalty) { throw { code: 428, message: "Penalty is required" } }
-
-      if(!mongoose.Types.ObjectId.isValid(req.params.transactionId)) { throw { code: 400, message: "INVALID_TRANSACTION_ID" } }
+      const data = await PenaltyService.processData(req)
+      if (!data.status) throw { code: data.code, message: data.message }
       
-      const newPenalty = new Penalty({
-        transactionId: req.body.transactionId,
-        penalty: req.body.penalty,
-      })
+      const newPenalty = new Penalty(data.data)
       const penalty = await newPenalty.save()
       if(!penalty) { throw { code: 404, message: "FAILED_CREATE_PENALTY" } }
 
@@ -51,10 +51,11 @@ class PenaltyController {
 
   async show(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
-      const penalty = await Penalty.findOne({ _id: req.params.id })
+      const penalty = await Penalty.findOne({ _id: id })
       if(!penalty) { throw { code: 404, message: "PENALTY_NOT_FOUND" } }
       
       return res.status(200).json({
@@ -73,11 +74,12 @@ class PenaltyController {
 
   async update(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
       const penalty = await Penalty.findByIdAndUpdate(
-        { _id: req.params.id },
+        { _id: id },
         req.body,
         { new: true }
       )
@@ -99,10 +101,11 @@ class PenaltyController {
 
   async destory(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
-      const penalty = await Penalty.findOneAndDelete({ _id: req.params.id })
+      const penalty = await Penalty.findOneAndDelete({ _id: id })
       if(!penalty) { throw { code: 500, message: "PENALTY_DELETE_FAILED" } }
 
       return res.status(200).json({

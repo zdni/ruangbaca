@@ -22,7 +22,7 @@ const Schema = mongoose.Schema({
       third: { type: String },
     }
   },
-  file: { type: String },
+  // file: { type: String },
   storageId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -34,6 +34,15 @@ const Schema = mongoose.Schema({
   categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category'
+  },
+  category: {
+    type: String,
+    enum: [
+      'book',
+      'theses',
+      'report',
+    ],
+    default: 'book'
   },
   createdAt: { type: Number },
   updatedAt: { type: Number },

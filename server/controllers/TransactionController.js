@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import Transaction from '../models/Transaction.js'
+import TransactionService from '../services/TransactionService.js'
 
 class TransactionController {
   async index(req, res){
@@ -23,20 +24,10 @@ class TransactionController {
 
   async store(req, res) {
     try {
-      if(!req.body.documentId) { throw { code: 428, message: "Document is required" } }
-      if(!req.body.endDate) { throw { code: 428, message: "End Date is required" } }
-      if(!req.body.startDate) { throw { code: 428, message: "Start Date is required" } }
-      if(!req.body.userId) { throw { code: 428, message: "User is required" } }
-
-      if(!mongoose.Types.ObjectId.isValid(req.params.documentId)) { throw { code: 400, message: "INVALID_DOCUMENT_ID" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.userId)) { throw { code: 400, message: "INVALID_USER_ID" } }
+      const data = TransactionService.processData(req)
+      if (!data.status) throw { code: data.code, message: data.message }
       
-      const newTransaction = new Transaction({
-        documentId: req.body.documentId,
-        endDate: req.body.endDate,
-        startDate: req.body.startDate,
-        userId: req.body.userId
-      })
+      const newTransaction = new Transaction(data.data)
       const transaction = await newTransaction.save()
       if(!transaction) { throw { code: 404, message: "FAILED_CREATE_TRANSACTION" } }
 
@@ -56,10 +47,11 @@ class TransactionController {
 
   async show(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
-      const transaction = await Transaction.findOne({ _id: req.params.id })
+      const transaction = await Transaction.findOne({ _id: id })
       if(!transaction) { throw { code: 404, message: "TRANSACTION_NOT_FOUND" } }
       
       return res.status(200).json({
@@ -78,11 +70,12 @@ class TransactionController {
 
   async update(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
       const transaction = await Transaction.findByIdAndUpdate(
-        { _id: req.params.id },
+        { _id: id },
         req.body,
         { new: true }
       )
@@ -104,10 +97,11 @@ class TransactionController {
 
   async destory(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
-      const transaction = await Transaction.findOneAndDelete({ _id: req.params.id })
+      const transaction = await Transaction.findOneAndDelete({ _id: id })
       if(!transaction) { throw { code: 500, message: "TRANSACTION_DELETE_FAILED" } }
 
       return res.status(200).json({

@@ -22,10 +22,11 @@ class CategoryController {
 
   async store(req, res) {
     try {
-      if(!req.body.name) { throw { code: 428, message: "Name Book is required" } }
+      const { name } = req.body
+      if(!name) { throw { code: 428, message: "NAME_IS_REQUIRED" } }
 
       const newCategory = new Category({
-        name: req.body.name
+        name: name
       })
       const category = await newCategory.save()
       if( !category ) { throw { code: 500, message: "FAILED_CREATE_CATEGORY" } }
@@ -45,10 +46,11 @@ class CategoryController {
 
   async show(req, res) {
     try {
-      if(!req.params.id) { throw { code: 428, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid(req.params.id)) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
-      const category = await Category.findOne({ _id: req.params.id })
+      const category = await Category.findOne({ _id: id })
       if(!category) { throw { code: 404, message: "CATEGORY_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -67,11 +69,12 @@ class CategoryController {
 
   async update(req, res) {
     try {
-      if(!req.params.id) { throw { code: 420, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid( req.params.id )) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 420, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid( id )) { throw { code: 400, message: "INVALID_ID" } }
 
       const category = await Category.findByIdAndUpdate(
-        { _id: req.params.id },
+        { _id: id },
         req.body,
         { new: true }
       )
@@ -92,10 +95,11 @@ class CategoryController {
 
   async destroy(req, res) {
     try {
-      if(!req.params.id) { throw { code: 420, message: "ID_REQUIRED" } }
-      if(!mongoose.Types.ObjectId.isValid( req.params.id )) { throw { code: 400, message: "INVALID_ID" } }
+      const {id} = req.params
+      if(!id) { throw { code: 420, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid( id )) { throw { code: 400, message: "INVALID_ID" } }
 
-      const category = await Category.findOneAndDelete({ _id: req.params.id })
+      const category = await Category.findOneAndDelete({ _id: id })
       if(!category) { throw { code: 500, message: "CATEGORY_DELETE_FAILED" } }
 
       return res.status(200).json({
@@ -113,3 +117,5 @@ class CategoryController {
 }
 
 export default new CategoryController
+
+// IS_REQUIRED
