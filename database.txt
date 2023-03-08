@@ -1,0 +1,77 @@
+users:
+  _id: objectId
+  name: string
+  username: string
+  password: string
+  idNumber: string
+  - classYear: number
+
+documents:
+  _id: objectId
+  code: string
+  title: string
+  writer: string
+  cover: string
+  theses: 
+  - studentIdNumber: string
+  - graduationYear: number 
+  - lectures: object {
+      mentor: object {
+        main: string
+        secondary: string
+      },
+      examiner: {
+        main: string
+        secondary: string
+        tersier: string
+      }
+    }
+  - specialization: string
+  - file: string
+  - storage: string
+  books: 
+  - publisher: string
+  - publicationYear: number
+  - stock: number
+  - category: string
+
+categories:
+  _id: objectId
+  name: string
+
+penalties:
+  _id: objectId
+  transactionId: objectId
+  penalty: string
+  paymentDate: number
+  status: enum ()
+
+returns:
+  _id: objectId
+  transactionId: objectId
+  date: number
+  description: string
+
+specializations:
+  _id: objectId
+  name: string
+
+
+storages:
+  _id: objectId
+  name: string
+
+transactions:
+  _id: objectId
+  userId: objectId
+  documentId: objectId
+  startDate: number
+  endDate: number
+  status: enum (
+    pengajuan/submission |
+    peminjaman/approve |
+    dikembalikan/ |
+    terlambat |
+    terlambat dikembalikan |
+    sanksi sudah dibayar
+  )
