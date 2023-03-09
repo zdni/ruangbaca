@@ -21,7 +21,8 @@ const Schema = mongoose.Schema({
       'done',
       'late',
       'late_done',
-      'paid_done'
+      'paid_done',
+      'cancel'
     ],
     default: 'submission'
   },

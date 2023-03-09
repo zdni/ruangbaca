@@ -11,6 +11,7 @@ import Transaction from '../controllers/TransactionController.js'
 import User from '../controllers/UserController.js'
 
 import auth from '../middlewares/auth.js'
+import upload from '../libraries/helpers/fileHelper.js'
 
 const router = express.Router()
 
@@ -43,17 +44,18 @@ router.post('/auth/refresh-token', Auth.refreshToken)
 router.get('/users', auth(), User.index)
 router.get('/users/:id', auth(), User.show)
 router.post('/users', auth(), User.store)
-router.post('/users/reset-password/:id', auth(), User.resetPassword)
+router.put('/users/reset-password/:id', auth(), User.resetPassword)
 
 // my-account
-router.post('/my-account/change-password/:id', auth(), User.changePassword)
-router.get('my-account', auth(), User.show)
+router.put('/my-account/change-password/:id', auth(), User.changePassword)
+router.put('my-account/chage-profile-picture/:id', auth(), User.changeProfilePicture) //upload.single('image'), 
+router.get('my-account/:id', auth(), User.show)
 
 // documents
 router.get('/documents', Document.index)
 router.get('/documents/:id', Document.show)
-router.post('/documents', auth(), Document.store)
-router.put('/documents/:id', auth(), Document.update)
+router.post('/documents', auth(), Document.store) //upload.single('cover'), 
+router.put('/documents/:id', auth(), Document.update) //upload.single('cover'), 
 router.delete('/documents/:id', auth(), Document.destroy)
 
 // transactions

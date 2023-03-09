@@ -143,14 +143,14 @@ export const Account = () => {
                   <InputPassword 
                     handleChange={handleOldPasswordChange}
                     id='oldPassword'
-                    label='Kata Sandi Lama'
+                    label='Masukkan Kata Sandi Lama'
                     value={oldPassword}
                   />
                   <div className='flex flex-row gap-2 mt-2 mb-4'>
                     <InputPassword 
                       handleChange={handleNewPasswordChange}
                       id='newPassword'
-                      label='Kata Sandi Baru'
+                      label='Masukkan Kata Sandi Baru'
                       value={newPassword}
                     />
                     <InputPassword 

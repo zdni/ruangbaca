@@ -116,3 +116,8 @@ ERROR
     ]
   }
 }
+
+black: #1A2634
+blue: #203E5F
+yellow: #FFCC00
+white: #F1F1F1

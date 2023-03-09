@@ -19,10 +19,10 @@ export const DetailUserCard = () => {
           <div>
             <p className="font-medium">Al Zidni Kasim</p>
             <Badge text='Mahasiswa'>
-                <UserIcon className='h-5 w-5 stroke-1' />
+                <UserIcon className='h-4 w-4 stroke-1' />
             </Badge>
           </div>
-          <Badge text='Aktif' borderColor='border-emerald-600' />
+          <Badge text='Aktif' />
           <div>
             <Link to={{
               pathname: '/transactions'

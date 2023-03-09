@@ -26,7 +26,7 @@ export const TransactionModal = () => {
             </div>
             <div className="ml-3">
               <p className="text-xs font-semibold text-gray-900">
-                Tgl Peminjamanmt
+                Tgl Peminjamanm
               </p>
               <div className="flex text-xs text-gray-500">
                 <time dateTime="2020-03-16">

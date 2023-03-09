@@ -11,14 +11,15 @@ class UserService {
         idNumber,
         name,
         username,
-        password,
+        // password,
         role,
       } = req.body
 
       if(!idNumber) { return { status: false, code: 428, message: "ID_NUMBER_IS_REQUIRED" } }
       if(!name) { return { status: false, code: 428, message: "FULLNAME_IS_REQUIRED" } }
       if(!username) { return { status: false, code: 428, message: "USERNAME_IS_REQUIRED" } }
-      if(!password) { return { status: false, code: 428, message: "PASSWORD_IS_REQUIRED" } }
+      // if(!password) { return { status: false, code: 428, message: "PASSWORD_IS_REQUIRED" } }
+      const password = username
 
       const isUsernameExist = await usernameExist(username)
       if(isUsernameExist) { return { status: false, code: 409, message: "USERNAME_EXIST" } }

@@ -6,10 +6,10 @@ import UserService from '../services/UserService.js'
 class UserController {
   async index(req, res) {
     try {
-      const processQuery = UserService.processQuerySearch(req)
-      if(!processQuery.status) throw { code: data.code, message: "ERROR_QUERY_SEARCH" }
+      const processQuery = await UserService.processQuerySearch(req)
+      if(!processQuery.status) throw { code: processQuery.code, message: "ERROR_QUERY_SEARCH" }
       
-      const users = await User.find(processQuery.query)
+      const users = await User.find(processQuery.query).select('-password')
       if(!users) { throw { code: 404, message: "USER_DATA_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -56,7 +56,7 @@ class UserController {
       if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
       if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
-      const user = await User.findOne({ _id: id })
+      const user = await User.findById(id).select('-password')
       if(!user) { throw { code: 404, message: "USER_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -138,6 +138,18 @@ class UserController {
         message: "RESET_PASSWORD_USER_SUCCESS",
         user
       })
+    } catch (err) {
+      if(!err.code) { err.code = 500 }
+      return res.status(err.code).json({
+        status: false,
+        message: err.message
+      })
+    }
+  }
+
+  async changeProfilePicture(req, res) {
+    try {
+      
     } catch (err) {
       if(!err.code) { err.code = 500 }
       return res.status(err.code).json({

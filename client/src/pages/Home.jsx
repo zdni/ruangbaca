@@ -6,7 +6,7 @@ export const Home = () => {
     <>
       <div className='mb-12 flex flex-col px-6 rounded-lg'>
         <div className='w-full'>
-          <p className='text-2xl font-bold'>
+          <p className='text-xl font-bold'>
             Hai, Selamat Datang di Website Ruang Baca TI UHO 👋
           </p>
           <p className="mt-2 text-xs italic text-gray-500">

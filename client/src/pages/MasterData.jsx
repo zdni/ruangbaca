@@ -5,16 +5,16 @@ import { Button } from "../components/atoms"
 import { DataCard } from "../components/cards"
 import { classNames } from '../utils/classNames'
 
-import { useModalContext } from "../context/ModalContext"
+import { useAppContext } from '../context/appContext'
 
 export const MasterData = () => {
-  const { showModal } = useModalContext()
+  const { displayModal } = useAppContext()
   
   const tabs = ['Kategori Buku', 'Peminatan Jurusan', 'Tahun Angkatan', 'Lokasi Penyimpanan']
   
   return (
     <>
-      <Button text='Tambah Data' onClick={() => {showModal('form-master-data-modal', 'Tambah Data')}}>
+      <Button text='Tambah Data' onClick={() => {displayModal('form-master-data-modal', 'Tambah Data')}}>
         <PlusIcon className="mr-2 h-4 w-4 cursor-pointer" />
       </Button>
       <div className="w-full py-6 sm:px-0">
@@ -24,7 +24,7 @@ export const MasterData = () => {
             <Tab
               className={({ selected }) =>
                 classNames(
-                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5 ',
+                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
                   'ring-white ring-opacity-60 ring-offset-2 ring-offset-gray-400 focus:outline-none focus:ring-2',
                   selected
                   ? 'bg-white shadow'

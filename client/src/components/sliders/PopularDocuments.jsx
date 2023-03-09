@@ -17,10 +17,10 @@ export const PopularDocuments = () => {
   return (
     <div className='flex flex-col'>
       <div className='flex justify-between flex-row mb-2 mt-6 items-end'>
-        <p className="text-md font-semibold text-gray-900">
+        <p className="text-sm font-semibold">
           Dokumen Terbaru
         </p>
-        <p className='text-sm text-gray-500'>
+        <p className='text-xs text-gray-500'>
           <Link to={{pathname: '/documents'}} className='hover:underline'>
             Semua Dokumen
           </Link>

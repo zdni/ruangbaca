@@ -16,7 +16,7 @@ export const TransactionInformationCard = ({ title }) => {
     <DocumentCard>
       <div className="py-6 px-3 flex flex-col justify-between">
         <div>
-          <Badge text='Status' bgColor='bg-emerald-300'>
+          <Badge text='Status' bgColor='bg-default'>
             <TagIcon className='h-4 w-4 stroke-[1px]' />
           </Badge>
           <Link
@@ -32,7 +32,7 @@ export const TransactionInformationCard = ({ title }) => {
         </div>
         <div className="mt-2 flex items-center">
           <div className="flex-shrink-0">
-            <CalendarIcon className='h-6 w-6' />
+            <CalendarIcon className='h-4 w-4' />
           </div>
           <div className="ml-3">
             <p className="text-xs font-semibold text-gray-900">
@@ -48,7 +48,7 @@ export const TransactionInformationCard = ({ title }) => {
         <div className="mt-4 items-stretch justify-center text-left">
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-md border border-transparent border-gray-500 px-2 py-1 text-center shadow-s text-xs hover:bg-gray-500 hover:text-white"
+            className="inline-flex items-center justify-center rounded-md border border-transparent border-gray-500 px-2 py-1 text-center shadow-s text-xs hover:bg-secondary hover:text-white"
             onClick={() => showModal('transaction-modal', 'Informasi Transaksi')}
           >
             <EyeIcon className="mr-2 h-4 w-4 stroke-[1px]" />

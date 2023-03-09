@@ -22,8 +22,8 @@ export const FormMasterDataModal = () => {
       <form action="" className='mt-5 flex flex-col gap-1'>
         <InputText 
           handleChange={handleTextChange}
-          id='username' 
-          placeholder='Masukkan Username' 
+          id='name' 
+          placeholder='Masukkan Data' 
           value={text}
         />
       </form>

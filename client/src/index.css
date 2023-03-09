@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  color: #1A2634;
+}
+
 :root {
   --animation-speed: 1000ms;
   --animation-speed-fast: 250ms;
@@ -291,3 +298,18 @@ svg.cursor-pointer:hover {
 .react-datepicker__day--range-end {
   @apply bg-indigo-600 text-white hover:bg-white hover:text-gray-700;
 }
+
+.text-primary { color: #1A2634; }
+.text-secondary { color: #203E5F; }
+.text-tersier { color: #FFCC00; }
+.text-default { color: #F1F1F1; }
+
+.bg-primary { background-color: #1A2634; }
+.bg-secondary { background-color: #203E5F; }
+.bg-tersier { background-color: #FFCC00; }
+.bg-default { background-color: #F1F1F1; }
+
+.hover\:bg-primary:hover { background-color: #1A2634; }
+.hover\:bg-secondary:hover { background-color: #203E5F; }
+.hover\:bg-tersier:hover { background-color: #FFCC00; }
+.hover\:bg-default:hover { background-color: #F1F1F1; }
