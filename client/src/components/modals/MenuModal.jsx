@@ -5,7 +5,8 @@ import { BaseModal } from './BaseModal'
 import { Button, Item } from '../atoms'
 import { 
   LOGIN_BUTTON_TEXT, 
-  LOGIN_DESCRIPTION_TEXT, 
+  LOGIN_DESCRIPTION_TEXT,
+  LOGOUT_TEXT, 
 } from '../../constants/string'
 import {
   HOME_LINK,
@@ -19,7 +20,8 @@ import {
 import { useAppContext } from "../../context/appContext"
 
 export const MenuModal = () => {
-    const { displayModal, clearModal, modalId } = useAppContext()
+    const { clearModal, displayModal, modalId, user } = useAppContext()
+    
     return (
       <BaseModal isOpen={modalId === 'menu-modal'}>
         <div className="mt-2 flex flex-col divide-y">
@@ -46,9 +48,18 @@ export const MenuModal = () => {
         </div>
         <div className="mt-5 columns-2 items-stretch justify-center text-left">
           <div className="text-xs">{LOGIN_DESCRIPTION_TEXT}</div>
-          <Button text={LOGIN_BUTTON_TEXT} onClick={() => displayModal('login-modal', 'Masuk')} >
-            <ArrowLeftOnRectangleIcon className="mr-2 h-6 w-6 cursor-pointer" />
-          </Button>
+          {
+            !user && 
+            <Button text={LOGIN_BUTTON_TEXT} onClick={() => displayModal('login-modal', 'Masuk')} >
+              <ArrowLeftOnRectangleIcon className="mr-2 h-6 w-6 cursor-pointer" />
+            </Button>
+          }
+          {
+            user && 
+            <Button text={LOGOUT_TEXT} onClick={() => displayModal('logout-modal', 'Keluar')} >
+              <ArrowLeftOnRectangleIcon className="mr-2 h-6 w-6 cursor-pointer" />
+            </Button>
+          }
         </div>
       </BaseModal>
     )

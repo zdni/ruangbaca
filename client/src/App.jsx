@@ -22,6 +22,7 @@ import {
   FormMasterDataModal,
   InfoModal,
   LoginModal,
+  LogoutModal,
   MenuModal,
   SearchModal,
   TransactionModal,
@@ -68,6 +69,7 @@ function App() {
         <FormMasterDataModal />
         <InfoModal />
         <LoginModal />
+        <LogoutModal />
         <MenuModal />
         <SearchModal />
         <TransactionModal />

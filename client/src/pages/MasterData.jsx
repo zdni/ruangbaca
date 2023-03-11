@@ -6,11 +6,17 @@ import { DataCard } from "../components/cards"
 import { classNames } from '../utils/classNames'
 
 import { useAppContext } from '../context/appContext'
+import { useEffect } from "react"
 
 export const MasterData = () => {
-  const { displayModal } = useAppContext()
+  const { categories, displayModal, getMasterData } = useAppContext()
   
-  const tabs = ['Kategori Buku', 'Peminatan Jurusan', 'Tahun Angkatan', 'Lokasi Penyimpanan']
+  const tabs = ['Kategori Buku', 'Peminatan Jurusan', 'Lokasi Penyimpanan']
+
+  useEffect(() => {
+    getMasterData()
+  }, [])
+  
   
   return (
     <>
@@ -18,7 +24,11 @@ export const MasterData = () => {
         <PlusIcon className="mr-2 h-4 w-4 cursor-pointer" />
       </Button>
       <div className="w-full py-6 sm:px-0">
-        <Tab.Group>
+        <Tab.Group
+          onChange={(index) => {
+            console.log('index: ', index)
+          }}
+        >
           <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
           {(tabs.map((value) => (
             <Tab
@@ -38,8 +48,8 @@ export const MasterData = () => {
           )))}
           </Tab.List>
           <Tab.Panels className="mt-2">
-            <Tab.Panel className='p-4 border rounded-xl flex flex-row gap-2'>
-              <DataCard />
+            <Tab.Panel>
+              <DataCard items={categories}/>
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>

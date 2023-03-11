@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from 'react-router-dom'
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline' 
 
 import {
@@ -7,28 +8,39 @@ import {
   InputText
 } from '../atoms'
 import { BaseModal } from './BaseModal'
-
 import { useAppContext } from "../../context/appContext"
+import { MY_ACCOUNT_LINK } from '../../utils/links.js'
+
+const initialState = {
+  username: '',
+  password: ''
+}
 
 export const LoginModal = () => {
-  const { modalId, clearModal } = useAppContext()
+  const navigate = useNavigate()
+  const { clearModal, modalId, setupUser } = useAppContext()
+  const [state, setState] = useState(initialState)
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
-  const handleUsernameChange = (e) => setUsername(e.target.value)
-  const handlePasswordChange = (e) => setPassword(e.target.value)
+  const handleChange = e => {
+    setState({
+    ...state,
+      [e.target.name]: e.target.value
+    })
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    const {username, password} = state
+
     if( username.trim().length > 0 && password.trim().length > 0 ) {
-      const data = {
+      const userLogin = {
         username,
         password
       }
-      console.log( data )
+      setupUser({ userLogin })
+      navigate(`${ MY_ACCOUNT_LINK.path }`)
     } else {
-      console.log( 'Data Kosong' )
+      setupUser({  })
     }
     clearModal()
   }
@@ -38,16 +50,16 @@ export const LoginModal = () => {
       <form>
         <div className='mt-5 flex flex-col gap-1'>
           <InputText 
-            handleChange={handleUsernameChange} 
+            handleChange={handleChange} 
             id='username' 
             placeholder='Masukkan Username' 
-            value={username}
+            value={state.username}
           />
           <InputPassword 
-            handleChange={handlePasswordChange} 
+            handleChange={handleChange} 
             id='password' 
             placeholder='Masukkan Password'
-            value={password}
+            value={state.password}
           />
         </div>
         <div className="mt-5 items-stretch justify-center text-left sm:mt-6">

@@ -1,5 +1,4 @@
 import { PlusIcon } from '@heroicons/react/24/outline'
-import { useState } from 'react'
 
 import {
   Button,
@@ -10,11 +9,21 @@ import { BaseModal } from './BaseModal'
 import { useAppContext } from '../../context/appContext'
 
 export const FormMasterDataModal = () => {
-  const { modalId } = useAppContext()
-  const [text, setText] = useState('')
+  const { changeFormMasterData, modalId, createMasterData, form } = useAppContext()
 
   const handleTextChange = (e) => {
-    setText(e.target.value)
+    changeFormMasterData({
+      name: e.target.value
+    })
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    createMasterData({
+      form: form.masterData,
+      url: 'categories'
+    })
   }
 
   return (
@@ -24,11 +33,11 @@ export const FormMasterDataModal = () => {
           handleChange={handleTextChange}
           id='name' 
           placeholder='Masukkan Data' 
-          value={text}
+          value={form.masterData.name}
         />
       </form>
       <div className="mt-8 items-stretch justify-center text-left">
-        <Button text='Tambah Data'>
+        <Button text='Tambah Data' type='submit' onClick={handleSubmit}>
           <PlusIcon className="mr-2 h-6 w-6 cursor-pointer" />
         </Button>
       </div>

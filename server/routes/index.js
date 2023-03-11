@@ -3,6 +3,7 @@ import express from 'express'
 import Auth from '../controllers/AuthController.js'
 import Category from '../controllers/CategoryController.js'
 import Document from '../controllers/DocumentController.js'
+import MasterData from '../controllers/MasterDataController.js'
 import Penalty from '../controllers/PenaltyController.js'
 import Return from '../controllers/ReturnController.js'
 import Specialization from '../controllers/SpecializationController.js'
@@ -15,6 +16,9 @@ import upload from '../libraries/helpers/fileHelper.js'
 
 const router = express.Router()
 
+// master data
+router.get('/master-data', MasterData.index)
+
 // storages
 router.get('/storages', Storage.index)
 router.get('/storages/:id', Storage.show)
@@ -25,7 +29,7 @@ router.delete('/storages/:id', auth(), Storage.destroy)
 // categories
 router.get('/categories', Category.index)
 router.get('/categories/:id', Category.show)
-router.post('/categories', auth(), Category.store)
+router.post('/categories', Category.store)
 router.put('/categories/:id', auth(), Category.update)
 router.delete('/categories/:id', auth(), Category.destroy)
 
