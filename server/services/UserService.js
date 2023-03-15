@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
 
 import User from '../models/User.js'
@@ -16,7 +17,7 @@ class UserService {
       } = req.body
 
       if(!idNumber) { return { status: false, code: 428, message: "ID_NUMBER_IS_REQUIRED" } }
-      if(!name) { return { status: false, code: 428, message: "FULLNAME_IS_REQUIRED" } }
+      if(!name) { return { status: false, code: 428, message: "NAME_IS_REQUIRED" } }
       if(!username) { return { status: false, code: 428, message: "USERNAME_IS_REQUIRED" } }
       // if(!password) { return { status: false, code: 428, message: "PASSWORD_IS_REQUIRED" } }
       const password = username
@@ -51,9 +52,11 @@ class UserService {
     try {
       let query = {}
       const {
+        name,
         role,
       } = req.body
 
+      if(name) query['name'] = name
       if(role) query['role'] = role
 
       return {

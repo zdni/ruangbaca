@@ -6,7 +6,7 @@ const Schema = mongoose.Schema({
   writer: { type: String, required: true },
   cover: { type: String },
   studentIdNumber: { type: String },
-  graduationYear: { type: Number },
+  year: { type: Number },
   specializationId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Specialization'
@@ -29,7 +29,6 @@ const Schema = mongoose.Schema({
     ref: 'Storage'
   },
   publisher: { type: String },
-  publicationYear: { type: Number },
   stock: { type: Number },
   categoryId: {
     type: mongoose.Schema.Types.ObjectId,

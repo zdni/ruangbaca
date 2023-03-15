@@ -3,7 +3,10 @@ export const Select = ({
   id, 
   label, 
   options, 
-  selectedValue = ''
+  selectedValue = '',
+  keyText='',
+  keyValue='',
+  optionAll=false
 }) => {
   return (
     <div className="w-full flex flex-col items-start">
@@ -15,8 +18,13 @@ export const Select = ({
         onChange={handleChange} 
         name={id} 
       >
-        {(options && options.map(({value, text}) => 
-          <option key={value} value={value}>{text}</option>
+        {(
+          optionAll 
+            &&
+          <option key='all' value=''>Semua</option>
+        )}
+        {(options && options.map((option) => 
+          <option key={option[keyValue]} value={option[keyValue]}>{option[keyText]}</option>
         ))}
       </select>
     </div>

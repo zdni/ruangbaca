@@ -1,8 +1,8 @@
 import Div100vh from 'react-div-100vh'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
-import './App.css';
-import { Navbar } from './components/navbar/Navbar';
+import './App.css'
+import { Navbar } from './components/navbar/Navbar'
 import {
   Account,
   Document,
@@ -17,13 +17,16 @@ import {
 } from './pages'
 import { 
   AddUserModal,
+  ApplyTransactionModal,
   DeleteDataModal,
+  DeleteDocumentModal,
   FilterUserModal,
   FormMasterDataModal,
   InfoModal,
   LoginModal,
   LogoutModal,
   MenuModal,
+  ResetPasswordModal,
   SearchModal,
   TransactionModal,
 } from './components/modals'
@@ -38,7 +41,8 @@ import {
   USERS_LINK,
   USER_LINK,
   VIOLATIONS_LINK
-} from './utils/links';
+} from './utils/links'
+import { AdminGuard, UserGuard } from './components/guards'
 
 function App() {
   return (
@@ -51,26 +55,57 @@ function App() {
               <Routes>
                 <Route path={DOCUMENT_LINK.path} element={<Document />} />
                 <Route path={DOCUMENTS_LINK.path} element={<Documents />} />
-                <Route path={DOCUMENT_FORM_LINK.path} element={<DocumentForm />} />
-                <Route path={MASTER_DATA_LINK.path} element={<MasterData />} />
-                <Route path={MY_ACCOUNT_LINK.path} element={<Account />} />
+                <Route path={DOCUMENT_FORM_LINK.path} element={
+                  <AdminGuard>
+                    <DocumentForm />
+                  </AdminGuard>
+                } />
+                <Route path={MASTER_DATA_LINK.path} element={
+                  <AdminGuard>
+                    <MasterData />
+                  </AdminGuard>
+                } />
+                <Route path={MY_ACCOUNT_LINK.path} element={
+                  <UserGuard>
+                    <Account />
+                  </UserGuard>
+                } />
                 <Route path={HOME_LINK.path} element={<Home />} />
-                <Route path={TRANSACTIONS_LINK.path} element={<Transactions />} />
-                <Route path={USER_LINK.path} element={<User />} />
-                <Route path={USERS_LINK.path} element={<Users />} />
-                <Route path={VIOLATIONS_LINK.path} element={<Violations />} />
+                <Route path={TRANSACTIONS_LINK.path} element={
+                  <UserGuard>
+                    <Transactions />
+                  </UserGuard>
+                } />
+                <Route path={USER_LINK.path} element={
+                  <UserGuard>
+                    <User />
+                  </UserGuard>
+                } />
+                <Route path={USERS_LINK.path} element={
+                  <UserGuard>
+                    <Users />
+                  </UserGuard>
+                } />
+                <Route path={VIOLATIONS_LINK.path} element={
+                  <UserGuard>
+                    <Violations />
+                  </UserGuard>
+                } />
               </Routes>
             </div>
           </div>
         </div>
         <AddUserModal />
+        <ApplyTransactionModal />
         <DeleteDataModal />
+        <DeleteDocumentModal />
         <FilterUserModal />
         <FormMasterDataModal />
         <InfoModal />
         <LoginModal />
         <LogoutModal />
         <MenuModal />
+        <ResetPasswordModal />
         <SearchModal />
         <TransactionModal />
       </Div100vh>

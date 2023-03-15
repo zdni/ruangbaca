@@ -20,17 +20,30 @@ export const Navbar = () => {
           <div className="flex">
             <MagnifyingGlassIcon
               className="h-6 w-6 cursor-pointer"
-              onClick={() => displayModal('search-modal', 'Pencarian Lanjutan')}
+              onClick={() => displayModal({
+                modal: {
+                  id: 'search-modal', 
+                  title: 'Pencarian Lanjutan'
+                }
+              })}
             />
           </div>
           <div className="right-icons">
             <InformationCircleIcon
               className="mr-3 h-6 w-6 cursor-pointer"
-              onClick={() => displayModal('info-modal', 'Informasi Kontak')}
+              onClick={() => displayModal({
+                modal: {
+                  id: 'info-modal', 
+                  title: 'Informasi Kontak'
+                }
+              })}
             />
             <Bars3BottomRightIcon
               className="h-6 w-6 cursor-pointer"
-              onClick={() => displayModal('menu-modal', MENU_TITLE)}
+              onClick={() => displayModal({modal: {
+                id: 'menu-modal', 
+                title: MENU_TITLE
+              }})}
             />
           </div>
         </div>

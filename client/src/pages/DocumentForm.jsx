@@ -1,102 +1,218 @@
-import { useState } from "react"
+import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { 
   Button,
   InputFile,
+  InputNumber,
   InputText,
   Select,
 } from "../components/atoms"
 
+import { useAppContext } from '../context/appContext'
+
 export const DocumentForm = () => {
-  const types = [
-    {value: 'book', text: 'Buku'},
-    {value: 'thesis', text: 'Skripsi'},
-  ]
-  const categories = [
-    {value: 'tes', text: 'Aplikasi Perkantoran'},
-  ]
+  const { changeFormValue, createDocument, data, documentTypeOptions, form, getMasterData } = useAppContext()
+  const { document } = form
+  const { categories, specializations, storages } = data
+
+  const handleChange = (e) => {
+    changeFormValue({
+      key: 'document',
+      value: {
+        ...form.document,
+        [e.target.name]: e.target.value
+      }
+    })
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log(document)
+    
+    let data = {
+      category: document.category,
+      code: document.code,
+      title: document.title,
+      writer: document.writer,
+      year: document.year,
+      stock: document.stock,
+      storageId: document.storageId || storages[0]._id
+    }
+    
+    if( document.category === 'book' ) {
+      data['categoryId'] = document.categoryId || categories[0]._id
+      data['publisher'] = document.publisher
+    } else if( document.category === 'theses' ) {
+      data['studentIdNumber'] = document.studentIdNumber
+      data['specializationId'] = document.specializationId || specializations[0]._id
+      data['mentor'] = {
+        main: document.mentorMain,
+        second: document.mentorSecond,
+      }
+      data['examiner'] = {
+        main: document.examinerMain,
+        second: document.examinerSecond,
+        third: document.examinerThird,
+      }
+    }
+
+    if(form.state === 'create') {
+      createDocument({
+        form: data
+      })
+    }
+  }
+
+  useEffect(() => {
+    getMasterData()
+  })
 
   const navigate = useNavigate()
 
-  const [author, setAuthor] = useState('')
-  const [category, setCategory] = useState('')
-  const [code, setCode] = useState('')
-  const [publisher, setPublisher] = useState('')
-  const [title, setTitle] = useState('')
-  const [type, setType] = useState('')
-  const [year, setYear] = useState('')
-
-  const handleAuthorChange = (e) => setAuthor(e.target.value)
-  const handleCategoryChange = (e) => setCategory(e.target.value)
-  const handleCodeChange = (e) => setCode(e.target.value)
-  const handlePublisherChange = (e) => setPublisher(e.target.value)
-  const handleTitleChange = (e) => setTitle(e.target.value)
-  const handleTypeChange = (e) => setType(e.target.value)
-  const handleYearChange = (e) => setYear(e.target.value)
-  
   return (
-    <form action="" className='flex flex-col gap-1'>
+    <form className='flex flex-col gap-1'>
       <div className="flex flex-row gap-2">
         <Select 
-          handleChange={handleTypeChange}
-          id='type' 
+          handleChange={handleChange}
+          id='category' 
           label='Tipe Dokumen' 
-          options={types} 
-          selectedValue={type}
+          options={documentTypeOptions} 
+          selectedValue={document.category}
+          keyText='text'
+          keyValue='value'
         />
         <InputText 
-          handleChange={handleCodeChange}
+          handleChange={handleChange}
           id='code' 
           label='Kode Dokumen' 
-          value={code}
+          value={document.code}
         />
       </div>
       <InputText
-        handleChange={handleTitleChange} 
+        handleChange={handleChange} 
         id='title' 
         label='Judul Dokumen' 
-        value={title}
+        value={document.title}
       />
       <InputText
-        handleChange={handleAuthorChange} 
-        id='author' 
+        handleChange={handleChange} 
+        id='writer' 
         label='Penulis' 
-        value={author}
+        value={document.writer}
+      />
+      <div className="flex flex-row gap-2">
+        <InputText 
+          handleChange={handleChange}
+          id='year' 
+          label='Tahun Terbit' 
+          value={document.year}
+        />
+        <InputNumber 
+          handleChange={handleChange}
+          id='stock'
+          label='Stok'
+          placeholder="Stok Dokumen"
+          value={document.stock}
+        />
+      </div>
+      {(
+        document.category === 'book'
+          &&
+        <div className="my-4">
+          <InputText
+            handleChange={handleChange} 
+            id='publisher' 
+            label='Penerbit' 
+            value={document.publisher}
+          />
+          <Select 
+          handleChange={handleChange}
+          id='categoryId' 
+          label='Kategori Buku' 
+          options={categories}
+          selectedValue={document.categoryId || ''}
+          keyText='name'
+          keyValue='_id' 
+        />
+        </div>
+      )}
+      {( 
+        document.category === 'theses' 
+          && 
+        <div className="my-4">
+          <div className="flex flex-row gap-2">
+            <InputText
+              handleChange={handleChange} 
+              id='studentIdNumber' 
+              label='NIM' 
+              value={document.studentIdNumber}
+            />
+            <Select 
+              handleChange={handleChange}
+              id='specializationId' 
+              label='Peminatan' 
+              options={specializations}
+              selectedValue={document.specializationId || ''} 
+              keyText='name'
+              keyValue='_id'
+            />
+          </div>
+          <InputText
+            handleChange={handleChange} 
+            id='mentorMain' 
+            label='Pembimbing Utama' 
+            value={document.mentorMain}
+          />
+          <InputText
+            handleChange={handleChange} 
+            id='mentorSecond' 
+            label='Pembimbing Kedua' 
+            value={document.mentorSecond}
+          />
+          <InputText
+            handleChange={handleChange} 
+            id='examinerMain' 
+            label='Penguji Utama' 
+            value={document.examinerMain}
+          />
+          <InputText
+            handleChange={handleChange} 
+            id='examinerSecond' 
+            label='Penguji Kedua' 
+            value={document.examinerSecond}
+          />
+          <InputText
+            handleChange={handleChange} 
+            id='examinerThird' 
+            label='Penguji Ketga' 
+            value={document.examinerThird}
+          />
+        </div> 
+      )}
+      <Select 
+        handleChange={handleChange}
+        id='storageId' 
+        label='Lokasi Penyimpanan' 
+        options={storages}
+        selectedValue={document.storageId || ''} 
+        keyText='name'
+        keyValue='_id'
       />
       <InputFile
         id='cover' 
         label='Cover' 
       />
-      <div className="mt-4"></div>
-      <InputText
-        handleChange={handlePublisherChange} 
-        id='publisher' 
-        label='Penerbit' 
-        value={publisher}
-      />
-      <Select 
-        handleChange={handleCategoryChange}
-        id='category' 
-        label='Kategori Buku' 
-        options={categories}
-        selectedValue={category} 
-      />
-      <InputText 
-        handleChange={handleYearChange}
-        id='year' 
-        label='Tahun Terbit' 
-        value={year}
-      />
-      <div className="mt-4"></div>
-      <Button text='Tambah Dokumen' />
-      <Button 
-        text='Kembali' 
-        isPrimary={false}
-        onClick={() => {
-          navigate('/documents')
-        }}
-      />
+      <div className="mt-4">
+        <Button text='Tambah Dokumen' type="submit" onClick={handleSubmit} />
+        <Button 
+          text='Kembali' 
+          isPrimary={false}
+          onClick={() => {
+            navigate('/documents')
+          }}
+        />
+      </div>
     </form>
   )
 }

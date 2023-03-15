@@ -1,5 +1,6 @@
 export { Button } from './Button/Button'
 
+export { InputDate } from './Forms/InputDate'
 export { InputDatetime } from './Forms/InputDatetime'
 export { InputEmail } from './Forms/InputEmail'
 export { InputFile } from './Forms/InputFile'

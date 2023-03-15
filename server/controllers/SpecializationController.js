@@ -69,6 +69,7 @@ class SpecializationController {
 
   async update(req, res) {
     try {
+      const {id} = req.params
       if(!id) { throw { code: 420, message: "ID_REQUIRED" } }
       if(!mongoose.Types.ObjectId.isValid( id )) { throw { code: 400, message: "INVALID_ID" } }
 
@@ -94,6 +95,7 @@ class SpecializationController {
 
   async destroy(req, res) {
     try {
+      const {id} = req.params
       if(!id) { throw { code: 420, message: "ID_REQUIRED" } }
       if(!mongoose.Types.ObjectId.isValid( id )) { throw { code: 400, message: "INVALID_ID" } }
 

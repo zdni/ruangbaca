@@ -4,7 +4,7 @@ import { Fragment } from 'react'
 import { useAppContext } from '../../context/appContext'
 
 export const BaseModal = ({ children, isOpen }) => {
-  const { modalTitle, clearModal } = useAppContext()
+  const { modal, clearModal } = useAppContext()
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -49,7 +49,7 @@ export const BaseModal = ({ children, isOpen }) => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 "
                   >
-                    {modalTitle}
+                    {modal.title}
                   </Dialog.Title>
                   <div className="mt-2">{children}</div>
                 </div>

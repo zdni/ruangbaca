@@ -42,6 +42,7 @@ class AuthController {
         status: true,
         message: "LOGIN_SUCCESS",
         name: user.name,
+        role: user.role,
         accessToken,
         refreshToken,
       })
@@ -69,7 +70,7 @@ class AuthController {
         status: true,
         message: "REFRESH_TOKEN_SUCCESS",
         accessToken,
-        _refreshToken,
+        refreshToken: _refreshToken,
       })
     } catch (err) {
       if(!err.code) { err.code = 500 }

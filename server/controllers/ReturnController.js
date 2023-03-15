@@ -99,7 +99,7 @@ class ReturnController {
     }
   }
 
-  async destory(req, res) {
+  async destroy(req, res) {
     try {
       const {id} = req.params
       if(!id) { throw { code: 428, message: "ID_REQUIRED" } }

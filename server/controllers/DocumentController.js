@@ -10,8 +10,12 @@ class DocumentController {
       if(!processQuery.status) throw { code: data.code, message: "ERROR_QUERY_SEARCH" }
 
       const documents = await Document.find(processQuery.query)
+        .limit(req.query.limit)
+        .populate('categoryId')
+        .populate('specializationId')
+        .populate('storageId')
       if(!documents) { throw { code: 404, message: "DOCUMENT_DATA_NOT_FOUND" } }
-
+      
       return res.status(200).json({
         status: true,
         message: "LIST_DOCUMENT",
@@ -56,6 +60,9 @@ class DocumentController {
       if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
       const document = await Document.findOne({ _id: id })
+        .populate('categoryId')
+        .populate('specializationId')
+        .populate('storageId')
       if(!document) { throw { code: 404, message: "DOCUMENT_NOT_FOUND" } }
 
       return res.status(200).json({

@@ -1,5 +1,5 @@
 import { Tab } from "@headlessui/react"
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import { 
   Button,
@@ -11,60 +11,83 @@ import {
 import { DetailUserCard } from "../components/cards"
 
 import { classNames } from '../utils/classNames'
+import { useAppContext } from "../context/appContext"
 
 export const Account = () => {
-  const [confirmNewPassword, setConfirmNewPassword] = useState('')
-  const [generation, setGeneration] = useState('')
-  const [isDisabledButtonSubmitUpdateProfile, setIsDisabledButtonSubmitUpdateProfile] = useState(true)
-  const [isDisabledButtonSubmitUpdatePassword, setIsDisabledButtonSubmitUpdatePassword] = useState(true)
-  const [isDisabledButtonSubmitUpdateProfilePicture, setIsDisabledButtonSubmitUpdateProfilePicture] = useState(true)
-  const [identityNumber, setIdentityNumber] = useState('')
-  const [message, setMessage] = useState('')
-  const [name, setName] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [oldPassword, setOldPassword] = useState('')
+  const { changeFormValue, changeUserPassword, data, form } = useAppContext()
+  const { changePassword, changeProfilePicture, user } = form
 
-  const handleConfirmNewPasswordChange = (e) => setConfirmNewPassword(e.target.value)
-  const handleGenerationChange = (e) => setGeneration(e.target.value)
-  const handleIdentityNumberChange = (e) => setIdentityNumber(e.target.value)
-  const handleNameChange = (e) => setName(e.target.value)
-  const handleNewPasswordChange = (e) => setNewPassword(e.target.value)
-  const handleOldPasswordChange = (e) => setOldPassword(e.target.value)
-
-  useEffect(() => {
-    let value = true
-    if( generation !== '' && identityNumber !== '' && name !== '' ) value = false
-    setIsDisabledButtonSubmitUpdateProfile(value)
-  }, [generation, identityNumber, name])
-
-  useEffect(() => {
-    setIsDisabledButtonSubmitUpdateProfilePicture(true)
-  }, [])
-
-  useEffect(() => {
-    let value = true
-    if( confirmNewPassword !== '' && newPassword !== '' && oldPassword !== '' ) {
-      if(newPassword === confirmNewPassword) {
-        value = false
-        setMessage('')
+  const handleChangePassword = (e) => {
+    changeFormValue({
+      key: 'changePassword',
+      value: {
+        ...form.changePassword,
+        [e.target.name]: e.target.value
       }
-      if(newPassword !== confirmNewPassword) {
-        value = true
-        setMessage('Konfirmasi Kata Sandi tidak cocok!')
-      }
-    }
-    setIsDisabledButtonSubmitUpdatePassword(value)
-  }, [confirmNewPassword, newPassword, oldPassword])
+    })
+  }
 
+  const handleChangeUser = (e) => {
+    changeFormValue({
+      key: 'user',
+      value: {
+        ...form.user,
+        [e.target.name]: e.target.value
+      }
+    })
+  }
+
+  const handleSubmitChangePassword = (e) => {
+    e.preventDefault()
+    
+    changeUserPassword({
+      form: changePassword,
+      user: user.id
+    })
+  }
+  
   const handleSubmitUpdateProfile = (e) => {
+    e.preventDefault()
+    
+  }
+  
+  const handleSubmitUpdateProfilePicture = (e) => {
     e.preventDefault()
     console.log('handleSubmitUpdateProfile')
   }
 
+  useEffect(() => {
+    const { confirmPassword, newPassword, oldPassword } = changePassword
+    if( confirmPassword !== '' && newPassword !== '' && oldPassword !== '' ) {
+      changeFormValue({
+        key: 'changePassword',
+        value: {
+          ...form.changePassword,
+          isDisabledButton: false
+        }
+      })
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [changePassword])
+
+  useEffect(() => {
+    const { name, classYear, idNumber } = user
+    if( name !== '' && classYear !== '' && idNumber !== '' ) {
+      changeFormValue({
+        key: 'user',
+        value: {
+          ...form.user,
+          isDisabledButton: false
+        }
+      })
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
+
   const tabs = ['Biodata', 'Pengaturan Akun'];
   return (
     <div className="flex flex-col items-center">
-      <DetailUserCard />
+      <DetailUserCard user={{}}/>
       <div className="w-full py-6 sm:px-0">
         <Tab.Group>
           <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
@@ -91,28 +114,28 @@ export const Account = () => {
               <div className='mb-3 w-full p-3 rounded-md border-[1px]'>
                 <form action="">
                   <InputText 
-                    handleChange={handleNameChange}
+                    handleChange={handleChangeUser}
                     id='name'
                     label='Nama Lengkap'
-                    value={name}
+                    value={user.name}
                   />
                   <div className='flex flex-row gap-2 mt-2 mb-4'>
                     <InputText 
-                      handleChange={handleIdentityNumberChange}
-                      id='identityNumber'
+                      handleChange={handleChangeUser}
+                      id='idNumber'
                       label='Nomor Identitas'
-                      value={identityNumber}
+                      value={user.idNumber}
                     />
                     <InputNumber 
-                      handleChange={handleGenerationChange}
-                      id='generation'
+                      handleChange={handleChangeUser}
+                      id='classYear'
                       label='Tahun Angkatan'
-                      value={generation}
+                      value={user.classYear}
                     />
                   </div>
                   <Button 
                     onClick={handleSubmitUpdateProfile}
-                    isDisabled={isDisabledButtonSubmitUpdateProfile}
+                    isDisabled={user.isDisabledButton}
                     type='submit'
                     text='Simpan Perubahan' 
                   />
@@ -128,9 +151,10 @@ export const Account = () => {
                     />
                   </div>
                   <Button 
-                    isDisabled={isDisabledButtonSubmitUpdateProfilePicture}
+                    isDisabled={changeProfilePicture.isDisabledButton}
                     text='Simpan Perubahan' 
                     type='submit'
+                    onClick={handleSubmitUpdateProfilePicture}
                   />
                 </form>
               </div>
@@ -141,30 +165,31 @@ export const Account = () => {
               <div className='mt-3 w-full p-3 rounded-md border-[1px]'>
                 <form action="">
                   <InputPassword 
-                    handleChange={handleOldPasswordChange}
+                    handleChange={handleChangePassword}
                     id='oldPassword'
                     label='Masukkan Kata Sandi Lama'
-                    value={oldPassword}
+                    value={changePassword.oldPassword}
                   />
                   <div className='flex flex-row gap-2 mt-2 mb-4'>
                     <InputPassword 
-                      handleChange={handleNewPasswordChange}
+                      handleChange={handleChangePassword}
                       id='newPassword'
                       label='Masukkan Kata Sandi Baru'
-                      value={newPassword}
+                      value={changePassword.newPassword}
                     />
                     <InputPassword 
-                      handleChange={handleConfirmNewPasswordChange}
-                      id='confirmNewPassword'
+                      handleChange={handleChangePassword}
+                      id='confirmPassword'
                       label='Konfirmasi Kata Sandi Baru'
-                      value={confirmNewPassword}
+                      value={changePassword.confirmPassword}
                     />
                   </div>
-                  <p className="text-xs text-center mb-5 text-rose-500 font-medium">{message}</p>
+                  <p className="text-xs text-center mb-5 text-rose-500 font-medium">{''}</p>
                   <Button 
-                    isDisabled={isDisabledButtonSubmitUpdatePassword}
+                    isDisabled={changePassword.isDisabledButton}
                     text='Simpan Perubahan'
                     type='submit'
+                    onClick={handleSubmitChangePassword}
                   />
                 </form>
               </div>

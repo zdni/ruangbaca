@@ -1,5 +1,4 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
-import { useState } from 'react'
 
 import {
   Button,
@@ -11,32 +10,46 @@ import { BaseModal } from './BaseModal'
 import { useAppContext } from '../../context/appContext'
 
 export const FilterUserModal = () => {
-  const { modalId } = useAppContext()
+  const { changeFormValue, form, getUsers, modal, userTypeOptions } = useAppContext()
+  const { searchUser } = form
 
-  const [keyword, setKeyword] = useState('')
-
-  const handleKeywordChange = (e) => {
-    setKeyword(e.target.value)
+  const handleChange = (e) => {
+    changeFormValue({
+      key: 'searchUser',
+      value: {
+        ...form.searchUser,
+        [e.target.name]: e.target.value
+      }
+    })
   }
 
-  const types = [
-    {value: 'lecture', text: 'Dosen'}, 
-    {value: 'student', text: 'Mahasiswa'}, 
-  ]
-  
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    getUsers()
+  }
+
   return (
-    <BaseModal isOpen={modalId === 'filter-user-modal'}>
+    <BaseModal isOpen={modal.id === 'filter-user-modal'}>
       <form action="" className='mt-5 flex flex-col gap-1'>
         <InputSearch 
-          handleChange={handleKeywordChange}
-          id='keyword' 
+          handleChange={handleChange}
+          id='name' 
           placeholder='Masukkan Nama Pengguna'
-          value={keyword} 
+          value={searchUser.name} 
         />
-        <Select id='type' options={types} />
+        <Select 
+          id='role' 
+          options={userTypeOptions}
+          handleChange={handleChange}
+          keyText='text'
+          keyValue='value'
+          optionAll={true}
+          selectedValue={searchUser.role}
+        />
       </form>
       <div className="mt-8 items-stretch justify-center text-left">
-        <Button text='Terapkan'>
+        <Button text='Terapkan' type='submit' onClick={handleSubmit} >
           <MagnifyingGlassIcon className="mr-2 h-6 w-6 cursor-pointer" />
         </Button>
       </div>

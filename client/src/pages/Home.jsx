@@ -1,7 +1,15 @@
-import { PopularDocuments } from '../components/sliders/PopularDocuments'
+import { CarouselDocuments } from '../components/sliders/CarouselDocuments'
 import item from '../assets/images/item.svg'
+import { useEffect } from 'react'
+import { useAppContext } from '../context/appContext'
 
 export const Home = () => {
+  const { data, getDocuments } = useAppContext()
+  const { documents } = data
+
+  useEffect(() => {
+    getDocuments(10)
+  })
   return (
     <>
       <div className='mb-12 flex flex-col px-6 rounded-lg'>
@@ -17,7 +25,7 @@ export const Home = () => {
           <img src={item} alt="item" />
         </div>
       </div>
-      <PopularDocuments />
+      <CarouselDocuments documents={documents} />
     </>
   )
 }

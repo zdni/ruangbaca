@@ -15,10 +15,9 @@ class DocumentService {
         specializationId,
         categoryId,
         studentIdNumber,
-        graduationYear,
+        year,
         lectures,
         publisher,
-        publicationYear,
         stock,
         category,
         // file,
@@ -58,9 +57,8 @@ class DocumentService {
       }
 
       if(category) data['category'] = category
-      if(graduationYear) data['graduationYear'] = graduationYear
+      if(year) data['year'] = year
       if(lectures) data['lectures'] = lectures
-      if(publicationYear) data['publicationYear'] = publicationYear
       if(publisher) data['publisher'] = publisher
       if(stock) data['stock'] = stock
       if(studentIdNumber) data['studentIdNumber'] = studentIdNumber

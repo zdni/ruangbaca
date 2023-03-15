@@ -26,6 +26,10 @@ const Schema = mongoose.Schema({
     ],
     default: 'submission'
   },
+  stock: {
+    type: Number,
+    default: 1
+  },
   createdAt: { type: Number },
   updatedAt: { type: Number },
 },  {

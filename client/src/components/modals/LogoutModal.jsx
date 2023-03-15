@@ -9,7 +9,7 @@ import { HOME_LINK } from '../../utils/links.js'
 
 export const LogoutModal = () => {
   const navigate = useNavigate()
-  const { clearModal, modalId, logoutUser, user } = useAppContext()
+  const { clearModal, modal, logoutUser, user } = useAppContext()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -27,7 +27,7 @@ export const LogoutModal = () => {
   // }, [user, navigate])
 
   return (
-    <BaseModal isOpen={modalId === 'logout-modal'} >
+    <BaseModal isOpen={modal.id === 'logout-modal'} >
       <form>
         <p>Apakah Anda ingin mengakhiri sesi Anda?</p>
         <div className="mt-5 items-stretch justify-center text-left sm:mt-6">

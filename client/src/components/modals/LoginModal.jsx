@@ -1,5 +1,4 @@
-import { useState } from "react"
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline' 
 
 import {
@@ -9,57 +8,52 @@ import {
 } from '../atoms'
 import { BaseModal } from './BaseModal'
 import { useAppContext } from "../../context/appContext"
-import { MY_ACCOUNT_LINK } from '../../utils/links.js'
-
-const initialState = {
-  username: '',
-  password: ''
-}
+// import { MY_ACCOUNT_LINK } from '../../utils/links.js'
 
 export const LoginModal = () => {
-  const navigate = useNavigate()
-  const { clearModal, modalId, setupUser } = useAppContext()
-  const [state, setState] = useState(initialState)
+  // const navigate = useNavigate()
+  const { changeFormValue, clearModal, form, modal, loginUser } = useAppContext()
 
   const handleChange = e => {
-    setState({
-    ...state,
-      [e.target.name]: e.target.value
+    changeFormValue({
+      key: 'login',
+      value: {
+        ...form.login,
+        [e.target.name]: e.target.value
+      }
     })
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const {username, password} = state
+    const {username, password} = form.login
 
     if( username.trim().length > 0 && password.trim().length > 0 ) {
       const userLogin = {
         username,
         password
       }
-      setupUser({ userLogin })
-      navigate(`${ MY_ACCOUNT_LINK.path }`)
-    } else {
-      setupUser({  })
+      loginUser({ userLogin })
+      // navigate(`${ MY_ACCOUNT_LINK.path }`)
     }
-    clearModal()
+    clearModal( 'login' )
   }
 
   return (
-    <BaseModal isOpen={modalId === 'login-modal'} >
+    <BaseModal isOpen={modal.id === 'login-modal'} >
       <form>
         <div className='mt-5 flex flex-col gap-1'>
           <InputText 
             handleChange={handleChange} 
             id='username' 
             placeholder='Masukkan Username' 
-            value={state.username}
+            value={form.login.username}
           />
           <InputPassword 
             handleChange={handleChange} 
             id='password' 
             placeholder='Masukkan Password'
-            value={state.password}
+            value={form.login.password}
           />
         </div>
         <div className="mt-5 items-stretch justify-center text-left sm:mt-6">

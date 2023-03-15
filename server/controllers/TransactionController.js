@@ -6,6 +6,8 @@ class TransactionController {
   async index(req, res){
     try {
       const transactions = await Transaction.find()
+        .populate('userId')
+        .populate('documentId')
       if(!transactions) { throw { code: 404, message: "TRANSACTION_DATA_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -24,9 +26,9 @@ class TransactionController {
 
   async store(req, res) {
     try {
-      const data = TransactionService.processData(req)
+      const data = await TransactionService.processData(req)
+      console.log(data)
       if (!data.status) throw { code: data.code, message: data.message }
-      
       const newTransaction = new Transaction(data.data)
       const transaction = await newTransaction.save()
       if(!transaction) { throw { code: 404, message: "FAILED_CREATE_TRANSACTION" } }
@@ -95,7 +97,7 @@ class TransactionController {
     }
   }
 
-  async destory(req, res) {
+  async destroy(req, res) {
     try {
       const {id} = req.params
       if(!id) { throw { code: 428, message: "ID_REQUIRED" } }

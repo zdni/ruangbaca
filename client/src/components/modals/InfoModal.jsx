@@ -17,9 +17,9 @@ import {
 } from '../../constants/string'
 
 export const InfoModal = () => {
-  const { modalId } = useAppContext()
+  const { modal } = useAppContext()
   return (
-    <BaseModal isOpen={modalId === 'info-modal'}>
+    <BaseModal isOpen={modal.id === 'info-modal'}>
       <p className="text-sm text-gray-500 dark:text-gray-300">{APP_DESCRIPTION_TEXT}</p>
       <div className="mt-2 flex flex-col divide-y">
         <Item 

@@ -1,14 +1,29 @@
-import { DocumentPlusIcon } from "@heroicons/react/24/outline"
+import { useEffect } from "react"
 import { Link } from "react-router-dom"
+import { useSearchParams } from 'react-router-dom'
+import { DocumentPlusIcon } from "@heroicons/react/24/outline"
 
 import { Button } from "../components/atoms"
-import { DocumentInformationCard } from "../components/cards"
+import { DocumentCard } from "../components/cards"
 
 import { useAppContext } from '../context/appContext'
 import { DOCUMENT_FORM_LINK } from "../utils/links"
 
 export const Documents = () => {
-  const { displayModal } = useAppContext()
+  const { data, displayModal, getDocuments } = useAppContext()
+  const { documents } = data
+  const [searchParams] = useSearchParams()
+
+  useEffect(() => {
+    let query = ''
+    for (const entry of searchParams.entries()) {
+      query += `${entry[0]}=${entry[1]}`
+    }
+
+    getDocuments({
+      query 
+    })
+  }, [searchParams])
 
   return (
     <>
@@ -22,14 +37,23 @@ export const Documents = () => {
           Semua Dokumen
         </p>
         <p className='text-xs text-gray-500'>
-          <button className='hover:underline' onClick={() => displayModal('search-modal', 'Pencarian Lanjutan')}>
+          <button className='hover:underline' onClick={() => displayModal({
+            modal: {
+              id: 'search-modal', 
+              title: 'Pencarian Lanjutan'
+            }
+          })}>
             Filter Dokumen
           </button>
         </p>
       </div>
       <div className='items-center flex flex-row flex-wrap gap-3'>
-        <DocumentInformationCard title='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam numquam fugit excepturi nulla. Corrupti iste deserunt ipsum inventore numquam harum sunt sit expedita voluptates iure adipisci, sint non perferendis id.' />
-        <DocumentInformationCard title='Judul Buku' />
+        {(documents && documents.map((item) => (
+          <DocumentCard 
+            document={item}
+            key={item._id}
+          />
+        )))}
       </div>
     </>
   )

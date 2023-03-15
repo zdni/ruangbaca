@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { UserPlusIcon } from '@heroicons/react/24/outline'
 
 import { 
@@ -10,54 +9,70 @@ import {
 import { BaseModal } from './BaseModal'
 import { useAppContext } from "../../context/appContext"
 
-const initialState = {
-  idenityNumber: '',
-  name: '',
-  username: '',
-  type: 'lecture',
-}
-
 export const AddUserModal = () => {
-  const { userTypeOptions, modalId } = useAppContext()
-  const [values, setValues] = useState(initialState)
+  const { changeFormValue, createUser, form, modal, userTypeOptions } = useAppContext()
+  const { user } = form
 
   const handleChange = (e) => {
-    setValues({
-      ...values,
-      [e.target.name] : e.target.value,
+    changeFormValue({
+      key: 'user',
+      value: {
+        ...form.user,
+        [e.target.name]: e.target.value
+      }
     })
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    
+    createUser({ user })
+  }
+
   return (
-    <BaseModal isOpen={ modalId === 'add-user-modal'}>
+    <BaseModal isOpen={ modal.id === 'add-user-modal'}>
       <form className='mt-5 flex flex-col gap-1'>
         <InputText
           handleChange={handleChange} 
           id='username' 
           placeholder='Masukkan Username' 
-          value={values.username}
+          value={user.username}
         />
         <InputText 
           handleChange={handleChange}
           id='name' 
           placeholder='Masukkan Nama Pengguna' 
-          value={values.name}
+          value={user.name}
         />
-        <InputText 
-          handleChange={handleChange}
-          id='idenityNumber' 
-          placeholder='Masukkan NIM' 
-          value={values.identityNumber}
-        />
+        {(
+          user.role === 'student'
+            &&
+          <div className="flex flex-row gap-2">
+            <InputText 
+              handleChange={handleChange}
+              id='idNumber' 
+              placeholder='Masukkan NIM' 
+              value={user.idNumber}
+            />
+            <InputText 
+              handleChange={handleChange}
+              id='classYear' 
+              placeholder='Angkatan' 
+              value={user.classYear}
+            />
+          </div>
+        )}
         <Select
           handleChange={handleChange} 
-          id='type' 
+          id='role' 
           options={userTypeOptions} 
-          selectedValue={values.type} 
+          selectedValue={user.role} 
+          keyText='text'
+          keyValue='value'
         />
       </form>
       <div className="mt-8 items-stretch justify-center text-left">
-        <Button text='Tambah Pengguna'>
+        <Button text='Tambah Pengguna' type='submit' onClick={handleSubmit}>
           <UserPlusIcon className="mr-2 h-6 w-6 cursor-pointer" />
         </Button>
       </div>

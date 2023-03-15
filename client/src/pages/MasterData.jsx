@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import { Tab } from "@headlessui/react"
 import { PlusIcon } from '@heroicons/react/24/outline'
 
@@ -6,28 +7,34 @@ import { DataCard } from "../components/cards"
 import { classNames } from '../utils/classNames'
 
 import { useAppContext } from '../context/appContext'
-import { useEffect } from "react"
 
 export const MasterData = () => {
-  const { categories, displayModal, getMasterData } = useAppContext()
+  const { data, displayModal, getMasterData } = useAppContext()
+  const { categories, specializations, storages } = data
   
   const tabs = ['Kategori Buku', 'Peminatan Jurusan', 'Lokasi Penyimpanan']
+  const urls = ['categories', 'specializations', 'storages']
+  const [url, setUrl] = useState(urls[0])
 
   useEffect(() => {
     getMasterData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
   
   return (
     <>
-      <Button text='Tambah Data' onClick={() => {displayModal('form-master-data-modal', 'Tambah Data')}}>
+      <Button text='Tambah Data' onClick={() => {displayModal({
+        modal: {
+          id: 'form-master-data-modal',
+          title: 'Tambah Data',
+          url: url 
+        }})}}>
         <PlusIcon className="mr-2 h-4 w-4 cursor-pointer" />
       </Button>
       <div className="w-full py-6 sm:px-0">
         <Tab.Group
-          onChange={(index) => {
-            console.log('index: ', index)
-          }}
+          onChange={(index) => { setUrl(urls[index]) }}
         >
           <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
           {(tabs.map((value) => (
@@ -49,7 +56,13 @@ export const MasterData = () => {
           </Tab.List>
           <Tab.Panels className="mt-2">
             <Tab.Panel>
-              <DataCard items={categories}/>
+              <DataCard items={categories} url={url}/>
+            </Tab.Panel>
+            <Tab.Panel>
+              <DataCard items={specializations} url={url}/>
+            </Tab.Panel>
+            <Tab.Panel>
+              <DataCard items={storages} url={url}/>
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>

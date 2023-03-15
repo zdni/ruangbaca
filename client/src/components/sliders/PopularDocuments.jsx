@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 import { DocumentInformationCard } from '../cards'
 
-export const PopularDocuments = () => {
+export const PopularDocuments = ({ documents }) => {
   const [width, setWidth] = useState(0)
   const carousel = useRef(null)
 
@@ -12,7 +12,7 @@ export const PopularDocuments = () => {
     if(carousel.current) {
       setWidth( carousel.current.scrollWidth - carousel.current.offsetWidth )
     }
-  }, [])
+  }, [documents])
 
   return (
     <div className='flex flex-col'>
@@ -32,21 +32,13 @@ export const PopularDocuments = () => {
           dragConstraints={{right: 0, left: -width}} 
           className='flex flex-row gap-3'
         >
-          <DocumentInformationCard 
-            title='Judul' 
-          />
-          <DocumentInformationCard 
-            title='Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet voluptatem est placeat non ullam quibusdam assumenda fuga, autem excepturi cum debitis rem adipisci nostrum nemo soluta sapiente, fugit vero at.'
-          />
-          <DocumentInformationCard 
-            title='Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet voluptatem est placeat non ullam quibusdam assumenda fuga, autem excepturi cum debitis rem adipisci nostrum nemo soluta sapiente, fugit vero at.'
-          />
-          <DocumentInformationCard 
-            title='Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet voluptatem est placeat non ullam quibusdam assumenda fuga, autem excepturi cum debitis rem adipisci nostrum nemo soluta sapiente, fugit vero at.'
-          />
-          <DocumentInformationCard 
-            title='Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet voluptatem est placeat non ullam quibusdam assumenda fuga, autem excepturi cum debitis rem adipisci nostrum nemo soluta sapiente, fugit vero at.'
-          />
+          {(documents && documents.map((item) => (
+            <DocumentInformationCard 
+              title={item.title} 
+              key={item._id}
+              id={item._id}
+            />
+          )))}
         </motion.div>
       </motion.div>
     </div>

@@ -18,7 +18,6 @@ const router = express.Router()
 
 // master data
 router.get('/master-data', MasterData.index)
-
 // storages
 router.get('/storages', Storage.index)
 router.get('/storages/:id', Storage.show)
@@ -27,9 +26,9 @@ router.put('/storages/:id', auth(), Storage.update)
 router.delete('/storages/:id', auth(), Storage.destroy)
 
 // categories
-router.get('/categories', Category.index)
+router.get('/categories', auth(), Category.index)
 router.get('/categories/:id', Category.show)
-router.post('/categories', Category.store)
+router.post('/categories', auth(), Category.store)
 router.put('/categories/:id', auth(), Category.update)
 router.delete('/categories/:id', auth(), Category.destroy)
 
@@ -45,21 +44,24 @@ router.post('/auth/login', Auth.login)
 router.post('/auth/refresh-token', Auth.refreshToken)
 
 // users
+router.get('/user', auth(), User.userFromToken)
 router.get('/users', auth(), User.index)
 router.get('/users/:id', auth(), User.show)
 router.post('/users', auth(), User.store)
 router.put('/users/reset-password/:id', auth(), User.resetPassword)
+router.put('/users/change-password/:id', auth(), User.changePassword)
+router.put('/users/change-profile-picture/:id', auth(), upload.single('/image'), User.changeProfilePicture) 
 
 // my-account
-router.put('/my-account/change-password/:id', auth(), User.changePassword)
-router.put('my-account/chage-profile-picture/:id', auth(), User.changeProfilePicture) //upload.single('image'), 
-router.get('my-account/:id', auth(), User.show)
+// router.put('/my-account/change-password/:id', User.changePassword)
+// router.put('/my-account/change-profile-picture/:id', User.changeProfilePicture) //upload.single('/image'), 
+// router.get('/my-account/:id', User.show)
 
 // documents
 router.get('/documents', Document.index)
 router.get('/documents/:id', Document.show)
-router.post('/documents', auth(), Document.store) //upload.single('cover'), 
-router.put('/documents/:id', auth(), Document.update) //upload.single('cover'), 
+router.post('/documents', auth(), upload.single('/cover'), Document.store)
+router.put('/documents/:id', auth(), upload.single('/cover'), Document.update)
 router.delete('/documents/:id', auth(), Document.destroy)
 
 // transactions
@@ -67,20 +69,20 @@ router.get('/transactions', auth(), Transaction.index)
 router.get('/transactions/:id', auth(), Transaction.show)
 router.post('/transactions', auth(), Transaction.store)
 router.put('/transactions:id', auth(), Transaction.update)
-router.delete('/transactions/:id', auth(), Transaction.destory)
+router.delete('/transactions/:id', auth(), Transaction.destroy)
 
 // penalties
 router.get('/penalties', auth(), Penalty.index)
 router.get('/penalties/:id', auth(), Penalty.show)
 router.post('/penalties', auth(), Penalty.store)
 router.put('/penalties:id', auth(), Penalty.update)
-router.delete('/penalties/:id', auth(), Penalty.destory)
+router.delete('/penalties/:id', auth(), Penalty.destroy)
 
 // returns
 router.get('/returns', auth(), Return.index)
 router.get('/returns/:id', auth(), Return.show)
 router.post('/returns', auth(), Return.store)
 router.put('/returns:id', auth(), Return.update)
-router.delete('/returns/:id', auth(), Return.destory)
+router.delete('/returns/:id', auth(), Return.destroy)
 
 export default router
