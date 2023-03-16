@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 
 import Document from '../models/Document.js'
+import Transaction from '../models/Transaction.js'
 import DocumentService from '../services/DocumentService.js'
 
 class DocumentController {
@@ -64,6 +65,20 @@ class DocumentController {
         .populate('specializationId')
         .populate('storageId')
       if(!document) { throw { code: 404, message: "DOCUMENT_NOT_FOUND" } }
+      
+      // count stock
+      const transactions = await Transaction.find({ 
+        documentId: document._id,
+        status: { $in: [ 'approve', 'late' ] }
+      })
+      let stockInTransaction = 0
+      for (const transaction of transactions) {
+        stockInTransaction += transaction.stock
+      }
+      document._doc.stock = document.stock - stockInTransaction
+      
+      // check stock
+      document._doc.available = (document.stock > 0) ? true : false
 
       return res.status(200).json({
         status: true,
@@ -85,9 +100,14 @@ class DocumentController {
       if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
       if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
       
+      const form = req.body
+      if (req.file) {
+        form.cover = req.file.filename
+      }
+
       const document = await Document.findByIdAndUpdate(
         { _id: id },
-        req.body,
+        form,
         { new: true }
       )
       if(!document) { throw { code: 500, message: "DOCUMENT_UPDATE_FAILED" } }

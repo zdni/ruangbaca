@@ -5,7 +5,10 @@ import TransactionService from '../services/TransactionService.js'
 class TransactionController {
   async index(req, res){
     try {
-      const transactions = await Transaction.find()
+      const processQuery = await TransactionService.processQuerySearchDocument(req)
+      if(!processQuery.status) throw { code: data.code, message: "ERROR_QUERY_SEARCH" }
+      
+      const transactions = await Transaction.find(processQuery.query)
         .populate('userId')
         .populate('documentId')
       if(!transactions) { throw { code: 404, message: "TRANSACTION_DATA_NOT_FOUND" } }
@@ -54,6 +57,8 @@ class TransactionController {
       if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
       const transaction = await Transaction.findOne({ _id: id })
+        .populate('userId')
+        .populate('documentId')
       if(!transaction) { throw { code: 404, message: "TRANSACTION_NOT_FOUND" } }
       
       return res.status(200).json({

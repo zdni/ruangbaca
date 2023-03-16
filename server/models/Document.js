@@ -4,6 +4,10 @@ const Schema = mongoose.Schema({
   code: { type: String, required: true },
   title: { type: String, required: true },
   writer: { type: String, required: true },
+  // cover: {
+  //   data: Buffer,
+  //   contentType: String
+  // },
   cover: { type: String },
   studentIdNumber: { type: String },
   year: { type: Number },
@@ -22,7 +26,6 @@ const Schema = mongoose.Schema({
       third: { type: String },
     }
   },
-  // file: { type: String },
   storageId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

@@ -20,8 +20,6 @@ class DocumentService {
         publisher,
         stock,
         category,
-        // file,
-        // cover,
       } = req.body
       
       if(!code) return { status: false, code: 428, message: "CODE_IS_REQUIRED" }
@@ -55,6 +53,7 @@ class DocumentService {
       
         data['categoryId'] = categoryId
       }
+      if(req.file) data['cover'] = req.file.filename
 
       if(category) data['category'] = category
       if(year) data['year'] = year
@@ -62,6 +61,7 @@ class DocumentService {
       if(publisher) data['publisher'] = publisher
       if(stock) data['stock'] = stock
       if(studentIdNumber) data['studentIdNumber'] = studentIdNumber
+      console.log(data)
       
       return {
         status: true,

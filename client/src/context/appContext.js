@@ -67,7 +67,7 @@ const initialState = {
       oldPassword: '',
     },
     changeProfilePicture: {
-      image: null,
+      image: '',
       isDisabledButton: true,
     },
     document: {
@@ -371,7 +371,7 @@ const AppProvider = ({ children }) => {
         form
       )
       console.log(data)
-      clearModal('document')
+      // clearModal('document')
     } catch (err) {
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
@@ -783,6 +783,26 @@ const AppProvider = ({ children }) => {
       })
     }
   }
+  const changeProfilePicture = async ({ form, id }) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken')
+      axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`
+      
+      const { data } = await axios.post(
+        `http://localhost:3001/api/users/change-profile-picture/${id}`,
+        form
+      )
+      console.log(data)
+      clearModal( 'changeProfilePicture' )
+
+    } catch (err) {
+      console.log(err)
+      dispatch({ 
+        type: SETUP_AXIOS_ERROR,
+        payload: { message: err.response.data.message }
+      })
+    }
+  }
   const changeUserPassword = async ({ form, id }) => {
     try {
       const accessToken = localStorage.getItem('accessToken')
@@ -887,6 +907,7 @@ const AppProvider = ({ children }) => {
         getUserLogin,
         getUser,
         createUser,
+        changeProfilePicture,
         changeUserPassword,
         resetUserPassword
       }}

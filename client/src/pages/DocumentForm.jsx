@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import axios from 'axios'
 
 import { 
   Button,
@@ -25,41 +26,82 @@ export const DocumentForm = () => {
       }
     })
   }
+  
+  const handleChangeFile = (e) => {
+    changeFormValue({
+      key: 'document',
+      value: {
+        ...form.document,
+        [e.target.name]: e.target.files[0]
+      }
+    })
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log(document)
-    
-    let data = {
-      category: document.category,
-      code: document.code,
-      title: document.title,
-      writer: document.writer,
-      year: document.year,
-      stock: document.stock,
-      storageId: document.storageId || storages[0]._id
-    }
-    
-    if( document.category === 'book' ) {
-      data['categoryId'] = document.categoryId || categories[0]._id
-      data['publisher'] = document.publisher
+
+    const formData = new FormData()
+    formData.append('category', document.category)
+    formData.append('code', document.code)
+    formData.append('title', document.title)
+    formData.append('writer', document.writer)
+    formData.append('year', document.year)
+    formData.append('stock', document.stock)
+    formData.append('storageId', document.storageId || storages[0]._id)
+
+    if ( document.category === 'book' ) {
+      formData.append('categoryId', document.categoryId || categories[0]._id)
+      formData.append('publisher', document.publisher)
     } else if( document.category === 'theses' ) {
-      data['studentIdNumber'] = document.studentIdNumber
-      data['specializationId'] = document.specializationId || specializations[0]._id
-      data['mentor'] = {
-        main: document.mentorMain,
-        second: document.mentorSecond,
+      formData.append('studentIdNumber', document.studentIdNumber)
+      formData.append('specializationId', document.specializationId || specializations[0]._id)
+      const lectures = {
+        mentor: {
+          main: document.mentorMain,
+          second: document.mentorSecond
+        },
+        examiner: {
+          main: document.examinerMain,
+          second: document.examinerSecond,
+          third: document.examinerThird
+        }
       }
-      data['examiner'] = {
-        main: document.examinerMain,
-        second: document.examinerSecond,
-        third: document.examinerThird,
-      }
+      formData.append('lectures', JSON.stringify(lectures))
     }
+    if ( document.cover ) {
+      formData.append('cover', document.cover)
+    }
+
+    // let data = {
+    //   category: document.category,
+    //   code: document.code,
+    //   title: document.title,
+    //   writer: document.writer,
+    //   year: document.year,
+    //   stock: document.stock,
+    //   storageId: document.storageId || storages[0]._id
+    // }
+    
+    // if( document.category === 'book' ) {
+    //   data['categoryId'] = document.categoryId || categories[0]._id
+    //   data['publisher'] = document.publisher
+    // } else if( document.category === 'theses' ) {
+    //   data['studentIdNumber'] = document.studentIdNumber
+    //   data['specializationId'] = document.specializationId || specializations[0]._id
+    //   data['mentor'] = {
+    //     main: document.mentorMain,
+    //     second: document.mentorSecond,
+    //   }
+    //   data['examiner'] = {
+    //     main: document.examinerMain,
+    //     second: document.examinerSecond,
+    //     third: document.examinerThird,
+    //   }
+    // }
 
     if(form.state === 'create') {
       createDocument({
-        form: data
+        form: formData
       })
     }
   }
@@ -71,7 +113,7 @@ export const DocumentForm = () => {
   const navigate = useNavigate()
 
   return (
-    <form className='flex flex-col gap-1'>
+    <form className='flex flex-col gap-1' encType="multipart/form-data">
       <div className="flex flex-row gap-2">
         <Select 
           handleChange={handleChange}
@@ -202,6 +244,7 @@ export const DocumentForm = () => {
       <InputFile
         id='cover' 
         label='Cover' 
+        handleChange={handleChangeFile}
       />
       <div className="mt-4">
         <Button text='Tambah Dokumen' type="submit" onClick={handleSubmit} />

@@ -13,10 +13,10 @@ const upload = multer({
     fieldSize: 1000000
   },
   fileFilter: (req, file, cb) => {
-    if (!file.originalname.match(/\.(jpeg|jpg|png|pdf|doc|docx|xlsx|xls)$/)) {
+    if (!file.originalname.match(/\.(jpeg|jpg|png)$/)) { //|pdf|doc|docx|xlsx|xls
       return cb(
         new Error(
-          'only upload files with jpg, jpeg, png, pdf, doc, docx, xslx, xls format.'
+          'only upload files with jpg, jpeg, png format.' //, pdf, doc, docx, xslx, xls
         )
       )
     }

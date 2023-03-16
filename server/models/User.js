@@ -15,6 +15,11 @@ const Schema = mongoose.Schema({
     ],
     default: 'student'
   },
+  // image: {
+  //   data: Buffer,
+  //   contentType: String
+  // },
+  image: { type: String },
   createdAt: { type: Number },
   updatedAt: { type: Number },
 }, {

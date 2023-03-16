@@ -29,7 +29,16 @@ export const Document = () => {
           &&
         <>
           <p>Detail Dokumen</p>
-          <img src="https://images.unsplash.com/photo-1608241561423-d65165321829" className="max-h-[160px] w-full rounded-lg object-cover mt-3" alt='cover' />
+          {(
+            !document.cover
+              &&
+            <img src="https://images.unsplash.com/photo-1608241561423-d65165321829" className="max-h-[160px] w-full rounded-lg object-cover mt-3" alt='cover' />
+          )}
+          {(
+            document.cover
+              &&
+            <img src={`http://localhost:3001/${document.cover}`} className="max-h-[160px] w-full rounded-lg object-cover mt-3" alt='cover' />
+          )}
           <div className="mt-4 flex flex-row gap-2 items-start">
             <Badge text={types[document.category]} borderColor='border-teal-600' />
             <Badge text={`Kode: ${document.code}`} borderColor='border-teal-600' />

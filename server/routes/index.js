@@ -11,7 +11,7 @@ import Storage from '../controllers/StorageController.js'
 import Transaction from '../controllers/TransactionController.js'
 import User from '../controllers/UserController.js'
 
-import auth from '../middlewares/auth.js'
+import auth from '../middleware/auth.js'
 import upload from '../libraries/helpers/fileHelper.js'
 
 const router = express.Router()
@@ -26,7 +26,7 @@ router.put('/storages/:id', auth(), Storage.update)
 router.delete('/storages/:id', auth(), Storage.destroy)
 
 // categories
-router.get('/categories', auth(), Category.index)
+router.get('/categories', Category.index)
 router.get('/categories/:id', Category.show)
 router.post('/categories', auth(), Category.store)
 router.put('/categories/:id', auth(), Category.update)
@@ -50,25 +50,20 @@ router.get('/users/:id', auth(), User.show)
 router.post('/users', auth(), User.store)
 router.put('/users/reset-password/:id', auth(), User.resetPassword)
 router.put('/users/change-password/:id', auth(), User.changePassword)
-router.put('/users/change-profile-picture/:id', auth(), upload.single('/image'), User.changeProfilePicture) 
-
-// my-account
-// router.put('/my-account/change-password/:id', User.changePassword)
-// router.put('/my-account/change-profile-picture/:id', User.changeProfilePicture) //upload.single('/image'), 
-// router.get('/my-account/:id', User.show)
+router.put('/users/change-profile-picture/:id', auth(), upload.single('image'), User.changeProfilePicture) 
 
 // documents
 router.get('/documents', Document.index)
 router.get('/documents/:id', Document.show)
-router.post('/documents', auth(), upload.single('/cover'), Document.store)
-router.put('/documents/:id', auth(), upload.single('/cover'), Document.update)
+router.post('/documents', auth(), upload.single('cover'), Document.store)
+router.put('/documents/:id', auth(), upload.single('cover'), Document.update)
 router.delete('/documents/:id', auth(), Document.destroy)
 
 // transactions
 router.get('/transactions', auth(), Transaction.index)
 router.get('/transactions/:id', auth(), Transaction.show)
 router.post('/transactions', auth(), Transaction.store)
-router.put('/transactions:id', auth(), Transaction.update)
+router.put('/transactions/:id', auth(), Transaction.update)
 router.delete('/transactions/:id', auth(), Transaction.destroy)
 
 // penalties

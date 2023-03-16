@@ -14,8 +14,8 @@ import { classNames } from '../utils/classNames'
 import { useAppContext } from "../context/appContext"
 
 export const Account = () => {
-  const { changeFormValue, changeUserPassword, data, form } = useAppContext()
-  const { changePassword, changeProfilePicture, user } = form
+  const { changeFormValue, changeProfilePicture, changeUserPassword, data, form } = useAppContext()
+  const { changePassword, user } = form
 
   const handleChangePassword = (e) => {
     changeFormValue({
@@ -23,6 +23,16 @@ export const Account = () => {
       value: {
         ...form.changePassword,
         [e.target.name]: e.target.value
+      }
+    })
+  }
+
+  const handleChangeProfilePicture = (e) => {
+    changeFormValue({
+      key: 'changeProfilePicture',
+      value: {
+      ...form.changeProfilePicture,
+        [e.target.name]: e.target.files[0]
       }
     })
   }
@@ -53,7 +63,14 @@ export const Account = () => {
   
   const handleSubmitUpdateProfilePicture = (e) => {
     e.preventDefault()
-    console.log('handleSubmitUpdateProfile')
+    
+    const formData = new FormData()
+    formData.append('image', form.changeProfilePicture.image)
+
+    changeProfilePicture({
+      form: formData,
+      id: user.id
+    })
   }
 
   useEffect(() => {
@@ -143,15 +160,15 @@ export const Account = () => {
               </div>
               <p>Perbarui Foto Profil</p>
               <div className='w-full p-3 rounded-md border-[1px]'>
-                <form action="">
+                <form encType="multipart/form-data">
                   <div className="mb-4">
                     <InputFile 
-                      id='name'
+                      id='image'
                       label='Pilih Foto Profil'
+                      handleChange={handleChangeProfilePicture}
                     />
                   </div>
                   <Button 
-                    isDisabled={changeProfilePicture.isDisabledButton}
                     text='Simpan Perubahan' 
                     type='submit'
                     onClick={handleSubmitUpdateProfilePicture}

@@ -10,6 +10,8 @@ class PenaltyController {
       if(!processQuery.status) throw { code: data.code, message: "ERROR_QUERY_SEARCH" }
       
       const penalties = await Penalty.find(processQuery.query)
+        .populate('transactionId')
+        .populate('userId')
       if(!penalties) { throw { code: 404, message: "PENALTY_DATA_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -56,6 +58,8 @@ class PenaltyController {
       if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
       const penalty = await Penalty.findOne({ _id: id })
+        .populate('transactionId')
+        .populate('userId')
       if(!penalty) { throw { code: 404, message: "PENALTY_NOT_FOUND" } }
       
       return res.status(200).json({

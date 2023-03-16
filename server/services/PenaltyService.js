@@ -64,7 +64,9 @@ class PenaltyService {
       const checkTransId = await checkValidationObjectId(transactionId, Transaction, "TRANSACTION")
         if(checkTransId.status) query['transactionId'] = transactionId
       }
-      query['status'] = status
+      if(status && status !== 'all') {
+        query['status'] = status
+      }
 
       return {
         status: true,

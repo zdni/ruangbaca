@@ -1,6 +1,9 @@
 import mongoose from 'mongoose'
 
 import User from '../models/User.js'
+import Transaction from '../models/Transaction.js'
+import Penalty from '../models/Penalty.js'
+
 import UserService from '../services/UserService.js'
 
 class UserController {
@@ -53,12 +56,25 @@ class UserController {
   async show(req, res) {
     try {
       const {id} = req.params
-
+      const {
+        withTransaction,
+        withPenalty
+      } = req.query
+      
       if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
       if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
-
+      
       const user = await User.findById(id).select('-password')
       if(!user) { throw { code: 404, message: "USER_NOT_FOUND" } }
+      
+      if(withTransaction) {
+        const transactions = await Transaction.find({ userId: id })
+        user._doc.transactions = transactions
+      }
+      if(withPenalty) {
+        const penalties = await Penalty.find({ userId: id })
+        user._doc.penalties = penalties
+      }
 
       return res.status(200).json({
         status: true,
@@ -98,6 +114,7 @@ class UserController {
 
   async changePassword(req, res) {
     try {
+      const { id } = req.params
       const data = await UserService.processChangePassword(req)
       if (!data.status) throw { code: data.code, message: data.message }
 
@@ -124,11 +141,12 @@ class UserController {
 
   async resetPassword(req, res) {
     try {
+      const { id } = req.params
       const data = await UserService.processResetPassword(req)
       if (!data.status) throw { code: data.code, message: data.message }
 
       const user = await User.findOneAndUpdate(
-        { _id: req.params.id },
+        { _id: id },
         { password: data.password },
         { new: true }
       )
@@ -150,7 +168,27 @@ class UserController {
 
   async changeProfilePicture(req, res) {
     try {
+      const { id } = req.params
       
+      const form = {}
+      if(req.file) {
+        form.image = req.file.filename
+      } else {
+        throw { code: 428, message: 'IMAGE_NOT_FOUND' }
+      }
+
+      const user = await User.findOneAndUpdate(
+        { _id: id },
+        form,
+        { new: true }
+      )
+      if(!user) { throw { code: 500, message: "CHANGE_PROFILE_PICTURE_USER_FAILED" } }
+
+      return res.status(200).json({
+        status: true,
+        message: "CHANGE_PROFILE_PICTURE_USER_SUCCESS",
+        user
+      })
     } catch (err) {
       if(!err.code) { err.code = 500 }
       return res.status(err.code).json({

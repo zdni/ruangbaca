@@ -50,7 +50,15 @@ class TransactionService {
 
   async processQuerySearch(req) {
     try {
+      const {
+        status,
+      } = req.query
+
       let query = {}
+
+      if(status && status !== 'all') {
+        query['status'] = status
+      }
 
       return {
         status: true,

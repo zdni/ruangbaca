@@ -10,6 +10,8 @@ class ReturnController {
       if(!processQuery.status) throw { code: data.code, message: "ERROR_QUERY_SEARCH" }
 
       const returns = await Return.find(processQuery.query)
+        .populate('transactionId')
+        .populate('userId')
       if(!returns) { throw { code: 404, message: "RETURN_DATA_NOT_FOUND" } }
 
       return res.status(200).json({
@@ -38,7 +40,7 @@ class ReturnController {
       return res.status(200).json({
         status: true,
         message: "SUCCESS_CREATE_RETURN",
-        returnTransaction
+        return: returnTransaction
       })
     } catch (err) {
       if(!err.code) { err.code = 500 }
@@ -56,12 +58,14 @@ class ReturnController {
       if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
 
       const returnTransaction = await Return.findOne({ _id: id })
+        .populate('transactionId')
+        .populate('userId')
       if(!returnTransaction) { throw { code: 404, message: "RETURN_NOT_FOUND" } }
       
       return res.status(200).json({
         status: true,
         message: "RETURN_FOUND",
-        returnTransaction
+        return: returnTransaction
       })
     } catch (err) {
       if(!err.code) { err.code = 500 }
@@ -88,7 +92,7 @@ class ReturnController {
       return res.status(200).json({
         status: true,
         message: "RETURN_UPDATE_SUCCESS",
-        returnTransaction
+        return: returnTransaction
       })
     } catch (err) {
       if(!err.code) { err.code = 500 }
@@ -111,7 +115,7 @@ class ReturnController {
       return res.status(200).json({
         status: true,
         message: "RETURN_DELETE_SUCCESS",
-        returnTransaction
+        return: returnTransaction
       })
     } catch (err) {
       if(!err.code) { err.code = 500 }
