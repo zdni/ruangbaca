@@ -90,6 +90,33 @@ class UserController {
     }
   }
 
+  async update(req, res) {
+    try {
+      const {id} = req.params
+      if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
+      if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
+      console.log(req.body)
+      const user = await User.findOneAndUpdate(
+        { _id: id },
+        req.body,
+        { new: true }
+      )
+      if(!user) { throw { code: 500, message: "USER_UPDATE_FAILED" } }
+
+      return res.status(200).json({
+        status: true,
+        message: "USER_UPDATE_SUCCESS",
+        user
+      })
+    } catch (err) {
+      if(!err.code) { err.code = 500 }
+      return res.status(err.code).json({
+        status: false,
+        message: err.message
+      })
+    }
+  }
+
   async destroy(req, res) {
     try {
       const {id} = req.params

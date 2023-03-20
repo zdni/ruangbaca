@@ -8,8 +8,11 @@ import { Link } from "react-router-dom"
 export const DocumentCard = ({ document }) => {
   return (
     <div className="border-[1px] h-[182px] rounded-lg shadow w-[420px] flex">
-      <img src="https://images.unsplash.com/photo-1608241561423-d65165321829" className="w-2/5 rounded object-cover" alt='cover' />
-      <div className="w-full py-5 px-3 flex flex-col justify-between">
+        <div className="w-2/5">
+          {/* <img src={document.cover} onError={(e) => {e.target.src = 'http://localhost:3001/book.jpg'}} className="h-full w-full rounded object-cover outline outline-1 outline-black" alt='cover' /> */}
+          <img src='http://localhost:3001/book.jpg' className="h-full w-full rounded object-cover outline outline-1 outline-black" alt='cover' />
+        </div>
+      <div className="w-3/5 py-5 px-3 flex flex-col justify-between">
         <div className=''>
           <p className="h-[16px] text-xs font-light text-secondary truncate overflow-hidden mb-2">
           {(

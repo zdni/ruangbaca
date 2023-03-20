@@ -1,3 +1,5 @@
+import { toast } from 'react-toastify'
+
 import {
   CHANGE_FORM_STATE,
   CHANGE_FORM_VALUES,
@@ -6,6 +8,7 @@ import {
   CLEAR_FILTERS,
   CLEAR_MODAL,
   CLEAR_STATE,
+  DISPLAY_ALERT,
   DISPLAY_MODAL,
   GET_DOCUMENT,
   GET_DOCUMENTS,
@@ -22,6 +25,8 @@ import {
   LOGIN_USER,
   LOGOUT_USER,
   REFRESH_TOKEN,
+  SET_ALERT,
+  SET_USER_NULL,
   SETUP_AXIOS_BEGIN,
   SETUP_AXIOS_ERROR,
   SETUP_AXIOS_SUCCESS,
@@ -68,6 +73,50 @@ const reducer = (state, action) => {
       form,
     }
   }
+  if ( action.type === SET_ALERT ) {
+    if( action.data ) {
+      return {
+        ...state,
+        alert: action.data
+      }
+    } else {
+      return {
+      ...state,
+        alert: initialState.alert
+      }
+    }
+  }
+  if ( action.type === DISPLAY_ALERT ) {
+    const { alert } = state 
+    if( alert.show ) {
+      if( alert.type === 'error' ) {
+        toast.error( alert.text )
+      }
+      if( alert.type === 'info' ) {
+        toast.info( alert.text )
+      }
+      if( alert.type === 'success' ) {
+        toast.success( alert.text )
+      }
+      if( alert.type === 'warn' ) {
+        toast.warn( alert.text )
+      }
+      if( alert.type === 'promise' ) {
+        toast.promise( 
+          action.function,
+          {
+            pending: 'Sedang Proses',
+            success: alert.text,
+            error: alert.text
+          }
+        )
+      }
+    }
+    return {
+      ...state,
+      alert: initialState.alert
+    }
+  }
 
   // form
   if (action.type === CHANGE_FORM_VALUES) {
@@ -94,23 +143,39 @@ const reducer = (state, action) => {
     return { ...state, isLoading: true }
   }
   if ( action.type === SETUP_AXIOS_SUCCESS ) {
-    return { ...state, isLoading: false }
+    return { 
+      ...state, 
+      isLoading: false,
+      alert: {
+        show: true,
+        ...action.alert
+      } 
+    }
   }
   if ( action.type === SETUP_AXIOS_ERROR ) {
     return {
       ...state,
       isLoading: false,
-      error: action.payload.message,
+      alert: {
+        show: true,
+        ...action.alert
+      },
     }
   }
 
   // AUTH
   if ( action.type === LOGIN_USER ) {
-    return { ...state, isAuthenticated: true, user: action.payload }
+    return { 
+      ...state, 
+      alert: action.alert,
+      isAuthenticated: true, 
+      user: action.payload
+    }
   }
   if ( action.type === REFRESH_TOKEN ) {
     return {
       ...state,
+      alert: action.alert,  
       user: {
         ...state.user,
         accessToken: action.accessToken,
@@ -119,7 +184,12 @@ const reducer = (state, action) => {
     }
   }
   if ( action.type === LOGOUT_USER ) {
-    return { ...state, isAuthenticated: false, user: null }
+    return { 
+      ...state, 
+      alert: action.alert,
+      isAuthenticated: false, 
+      user: null 
+    }
   }
 
   // CATEGORY
@@ -225,6 +295,15 @@ const reducer = (state, action) => {
       data: {
         ...state.data,
         users: action.users
+      }
+    }
+  }
+  if ( action.type === SET_USER_NULL ) {
+    return {
+      ...state,
+      data: {
+        ...state.data,
+        user: null
       }
     }
   }

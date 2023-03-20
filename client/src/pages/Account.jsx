@@ -14,16 +14,35 @@ import { classNames } from '../utils/classNames'
 import { useAppContext } from "../context/appContext"
 
 export const Account = () => {
-  const { changeFormValue, changeProfilePicture, changeUserPassword, data, form } = useAppContext()
-  const { changePassword, user } = form
+  const { changeFormValue, changeProfilePicture, changeUserPassword, changeUserProfile, form, user } = useAppContext()
+  const { changePassword, } = form
 
-  const handleChangePassword = (e) => {
+  const handleChangeUser = (e) => {
     changeFormValue({
-      key: 'changePassword',
+      key: 'user',
       value: {
-        ...form.changePassword,
+        ...form.user,
         [e.target.name]: e.target.value
       }
+    })
+  }
+  
+  const handleSubmitUpdateProfile = (e) => {
+    e.preventDefault()
+
+    let data = {
+      name: form.user.name
+    }
+    if( user.role === 'student' ) {
+      data['classYear'] = form.user.classYear
+      data['idNumber'] = form.user.idNumber
+    } else if( user.role === 'lecture' ) {
+      data['idNumber'] = form.user.idNumber
+    }
+
+    changeUserProfile({
+      form: data,
+      id: user._id
     })
   }
 
@@ -36,12 +55,24 @@ export const Account = () => {
       }
     })
   }
+  
+  const handleSubmitUpdateProfilePicture = (e) => {
+    e.preventDefault()
+    
+    const formData = new FormData()
+    formData.append('image', form.changeProfilePicture.image)
 
-  const handleChangeUser = (e) => {
+    changeProfilePicture({
+      form: formData,
+      id: user._id
+    })
+  }
+
+  const handleChangePassword = (e) => {
     changeFormValue({
-      key: 'user',
+      key: 'changePassword',
       value: {
-        ...form.user,
+        ...form.changePassword,
         [e.target.name]: e.target.value
       }
     })
@@ -52,59 +83,28 @@ export const Account = () => {
     
     changeUserPassword({
       form: changePassword,
-      user: user.id
-    })
-  }
-  
-  const handleSubmitUpdateProfile = (e) => {
-    e.preventDefault()
-    
-  }
-  
-  const handleSubmitUpdateProfilePicture = (e) => {
-    e.preventDefault()
-    
-    const formData = new FormData()
-    formData.append('image', form.changeProfilePicture.image)
-
-    changeProfilePicture({
-      form: formData,
-      id: user.id
+      id: user._id
     })
   }
 
   useEffect(() => {
-    const { confirmPassword, newPassword, oldPassword } = changePassword
-    if( confirmPassword !== '' && newPassword !== '' && oldPassword !== '' ) {
-      changeFormValue({
-        key: 'changePassword',
-        value: {
-          ...form.changePassword,
-          isDisabledButton: false
-        }
-      })
-    }
+    changeFormValue({
+      key: 'user',
+      value: {
+      ...form.user,
+      id: user._id,
+      classYear: user.classYear,
+      idNumber: user.idNumber,
+      name: user.name,
+      }
+    })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [changePassword])
-
-  useEffect(() => {
-    const { name, classYear, idNumber } = user
-    if( name !== '' && classYear !== '' && idNumber !== '' ) {
-      changeFormValue({
-        key: 'user',
-        value: {
-          ...form.user,
-          isDisabledButton: false
-        }
-      })
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user])
+  }, [])
 
   const tabs = ['Biodata', 'Pengaturan Akun'];
   return (
     <div className="flex flex-col items-center">
-      <DetailUserCard user={{}}/>
+      <DetailUserCard />
       <div className="w-full py-6 sm:px-0">
         <Tab.Group>
           <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
@@ -134,25 +134,34 @@ export const Account = () => {
                     handleChange={handleChangeUser}
                     id='name'
                     label='Nama Lengkap'
-                    value={user.name}
+                    value={form.user.name}
                   />
                   <div className='flex flex-row gap-2 mt-2 mb-4'>
-                    <InputText 
-                      handleChange={handleChangeUser}
-                      id='idNumber'
-                      label='Nomor Identitas'
-                      value={user.idNumber}
-                    />
-                    <InputNumber 
-                      handleChange={handleChangeUser}
-                      id='classYear'
-                      label='Tahun Angkatan'
-                      value={user.classYear}
-                    />
+                    {(
+                      user.role !== 'admin'
+                        &&
+                      <>
+                        <InputText 
+                          handleChange={handleChangeUser}
+                          id='idNumber'
+                          label='Nomor Identitas'
+                          value={form.user.idNumber}
+                        />
+                        {(
+                          user.role === 'student'
+                            &&
+                          <InputNumber 
+                            handleChange={handleChangeUser}
+                            id='classYear'
+                            label='Tahun Angkatan'
+                            value={form.user.classYear}
+                          />
+                        )}
+                      </>
+                    )}
                   </div>
                   <Button 
                     onClick={handleSubmitUpdateProfile}
-                    isDisabled={user.isDisabledButton}
                     type='submit'
                     text='Simpan Perubahan' 
                   />
@@ -203,7 +212,6 @@ export const Account = () => {
                   </div>
                   <p className="text-xs text-center mb-5 text-rose-500 font-medium">{''}</p>
                   <Button 
-                    isDisabled={changePassword.isDisabledButton}
                     text='Simpan Perubahan'
                     type='submit'
                     onClick={handleSubmitChangePassword}

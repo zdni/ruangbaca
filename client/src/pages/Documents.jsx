@@ -17,12 +17,13 @@ export const Documents = () => {
   useEffect(() => {
     let query = ''
     for (const entry of searchParams.entries()) {
-      query += `${entry[0]}=${entry[1]}`
+      query += `${entry[0]}=${entry[1]}&`
     }
 
     getDocuments({
       query 
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
   return (

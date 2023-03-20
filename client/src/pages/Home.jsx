@@ -8,8 +8,11 @@ export const Home = () => {
   const { documents } = data
 
   useEffect(() => {
-    getDocuments(10)
-  })
+    getDocuments({
+      limit: 10
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   return (
     <>
       <div className='mb-12 flex flex-col px-6 rounded-lg'>

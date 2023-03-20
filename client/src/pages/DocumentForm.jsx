@@ -1,6 +1,5 @@
 import { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import axios from 'axios'
+import { useNavigate, useSearchParams } from "react-router-dom"
 
 import { 
   Button,
@@ -13,9 +12,19 @@ import {
 import { useAppContext } from '../context/appContext'
 
 export const DocumentForm = () => {
-  const { changeFormValue, createDocument, data, documentTypeOptions, form, getMasterData } = useAppContext()
-  const { document } = form
-  const { categories, specializations, storages } = data
+  const [searchParams] = useSearchParams()
+  const { 
+    changeFormState, 
+    changeFormValue, 
+    createDocument, 
+    data, 
+    documentTypeOptions, 
+    form, 
+    getDocument, 
+    getMasterData, 
+    updateDocument 
+  } = useAppContext()
+  const { categories, document, specializations, storages } = data
 
   const handleChange = (e) => {
     changeFormValue({
@@ -40,6 +49,7 @@ export const DocumentForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    const { document } = form
     const formData = new FormData()
     formData.append('category', document.category)
     formData.append('code', document.code)
@@ -72,43 +82,53 @@ export const DocumentForm = () => {
       formData.append('cover', document.cover)
     }
 
-    // let data = {
-    //   category: document.category,
-    //   code: document.code,
-    //   title: document.title,
-    //   writer: document.writer,
-    //   year: document.year,
-    //   stock: document.stock,
-    //   storageId: document.storageId || storages[0]._id
-    // }
-    
-    // if( document.category === 'book' ) {
-    //   data['categoryId'] = document.categoryId || categories[0]._id
-    //   data['publisher'] = document.publisher
-    // } else if( document.category === 'theses' ) {
-    //   data['studentIdNumber'] = document.studentIdNumber
-    //   data['specializationId'] = document.specializationId || specializations[0]._id
-    //   data['mentor'] = {
-    //     main: document.mentorMain,
-    //     second: document.mentorSecond,
-    //   }
-    //   data['examiner'] = {
-    //     main: document.examinerMain,
-    //     second: document.examinerSecond,
-    //     third: document.examinerThird,
-    //   }
-    // }
-
     if(form.state === 'create') {
       createDocument({
         form: formData
+      })
+    }else if(form.state === 'update') {
+      updateDocument({
+        form: formData,
+        id: document.id
       })
     }
   }
 
   useEffect(() => {
     getMasterData()
-  })
+    
+    if( searchParams.get('documentId') ) {
+      getDocument({ id: searchParams.get('documentId') })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if( document ) {
+      delete document.available
+      
+      document.id = document._id
+      document.storageId = document.storageId._id
+      if( document.category === 'book' ) {
+        document.categoryId = document.categoryId._id
+      }
+      if( document.category === 'theses' ) {
+        document.specializationId = document.specializationId._id
+      }
+
+      changeFormValue({
+        key: 'document',
+        value: {
+          ...form.document,
+          ...document,
+        }
+      })
+      changeFormState({
+        value: 'update'
+      })
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [document])
 
   const navigate = useNavigate()
 
@@ -120,7 +140,7 @@ export const DocumentForm = () => {
           id='category' 
           label='Tipe Dokumen' 
           options={documentTypeOptions} 
-          selectedValue={document.category}
+          selectedValue={form.document.category}
           keyText='text'
           keyValue='value'
         />
@@ -128,59 +148,59 @@ export const DocumentForm = () => {
           handleChange={handleChange}
           id='code' 
           label='Kode Dokumen' 
-          value={document.code}
+          value={form.document.code}
         />
       </div>
       <InputText
         handleChange={handleChange} 
         id='title' 
         label='Judul Dokumen' 
-        value={document.title}
+        value={form.document.title}
       />
       <InputText
         handleChange={handleChange} 
         id='writer' 
         label='Penulis' 
-        value={document.writer}
+        value={form.document.writer}
       />
       <div className="flex flex-row gap-2">
         <InputText 
           handleChange={handleChange}
           id='year' 
           label='Tahun Terbit' 
-          value={document.year}
+          value={form.document.year}
         />
         <InputNumber 
           handleChange={handleChange}
           id='stock'
           label='Stok'
           placeholder="Stok Dokumen"
-          value={document.stock}
+          value={form.document.stock}
         />
       </div>
       {(
-        document.category === 'book'
+        form.document.category === 'book'
           &&
         <div className="my-4">
           <InputText
             handleChange={handleChange} 
             id='publisher' 
             label='Penerbit' 
-            value={document.publisher}
+            value={form.document.publisher}
           />
           <Select 
-          handleChange={handleChange}
-          id='categoryId' 
-          label='Kategori Buku' 
-          options={categories}
-          selectedValue={document.categoryId || ''}
-          keyText='name'
-          keyValue='_id' 
-        />
+            handleChange={handleChange}
+            id='categoryId' 
+            label='Kategori Buku' 
+            options={categories}
+            selectedValue={form.document.categoryId || ''}
+            keyText='name'
+            keyValue='_id' 
+          />
         </div>
       )}
       {( 
-        document.category === 'theses' 
+        form.document.category === 'theses' 
           && 
         <div className="my-4">
           <div className="flex flex-row gap-2">
@@ -188,14 +208,14 @@ export const DocumentForm = () => {
               handleChange={handleChange} 
               id='studentIdNumber' 
               label='NIM' 
-              value={document.studentIdNumber}
+              value={form.document.studentIdNumber}
             />
             <Select 
               handleChange={handleChange}
               id='specializationId' 
               label='Peminatan' 
               options={specializations}
-              selectedValue={document.specializationId || ''} 
+              selectedValue={form.document.specializationId || ''} 
               keyText='name'
               keyValue='_id'
             />
@@ -204,31 +224,31 @@ export const DocumentForm = () => {
             handleChange={handleChange} 
             id='mentorMain' 
             label='Pembimbing Utama' 
-            value={document.mentorMain}
+            value={form.document.mentorMain}
           />
           <InputText
             handleChange={handleChange} 
             id='mentorSecond' 
             label='Pembimbing Kedua' 
-            value={document.mentorSecond}
+            value={form.document.mentorSecond}
           />
           <InputText
             handleChange={handleChange} 
             id='examinerMain' 
             label='Penguji Utama' 
-            value={document.examinerMain}
+            value={form.document.examinerMain}
           />
           <InputText
             handleChange={handleChange} 
             id='examinerSecond' 
             label='Penguji Kedua' 
-            value={document.examinerSecond}
+            value={form.document.examinerSecond}
           />
           <InputText
             handleChange={handleChange} 
             id='examinerThird' 
             label='Penguji Ketga' 
-            value={document.examinerThird}
+            value={form.document.examinerThird}
           />
         </div> 
       )}
@@ -237,7 +257,7 @@ export const DocumentForm = () => {
         id='storageId' 
         label='Lokasi Penyimpanan' 
         options={storages}
-        selectedValue={document.storageId || ''} 
+        selectedValue={form.document.storageId || ''} 
         keyText='name'
         keyValue='_id'
       />
@@ -247,7 +267,11 @@ export const DocumentForm = () => {
         handleChange={handleChangeFile}
       />
       <div className="mt-4">
-        <Button text='Tambah Dokumen' type="submit" onClick={handleSubmit} />
+        <Button 
+          text={ form.document.id === null ? 'Tambah Dokumen' : 'Simpan Perubahan'} 
+          type="submit" 
+          onClick={handleSubmit} 
+        />
         <Button 
           text='Kembali' 
           isPrimary={false}

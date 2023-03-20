@@ -9,6 +9,7 @@ import {
   CLEAR_FILTERS,
   CLEAR_MODAL,
   CLEAR_STATE,
+  DISPLAY_ALERT,
   DISPLAY_MODAL,
   GET_DOCUMENT,
   GET_DOCUMENTS,
@@ -25,10 +26,13 @@ import {
   LOGIN_USER,
   LOGOUT_USER,
   REFRESH_TOKEN,
+  SET_ALERT,
+  SET_USER_NULL,
   SETUP_AXIOS_BEGIN,
   SETUP_AXIOS_ERROR,
-  // SETUP_AXIOS_SUCCESS,
+  SETUP_AXIOS_SUCCESS,
 } from './actions'
+import { CODE } from '../constants/string'
 
 const userTypeOptions = [
   // { value: 'admin', text: 'Admin' },
@@ -42,6 +46,11 @@ const documentTypeOptions = [
 ]
 
 const initialState = {
+  alert: {
+    show: false,
+    text: 'tes',
+    type: 'success',
+  },
   documentTypeOptions,
   data: {
     categories: [],
@@ -97,6 +106,9 @@ const initialState = {
     masterData: {
       id: null,
       name: ''
+    },
+    penalty: {
+      description: '',
     },
     searchDocument: {
       category: '',
@@ -182,6 +194,13 @@ const AppProvider = ({ children }) => {
   const clearModal = ( key = '' ) => {
     dispatch({ type: CLEAR_MODAL, key })
   }
+  const setAlert = ( data = null ) => {
+    dispatch({ type: SET_ALERT, data })
+    displayAlert()
+  }
+  const displayAlert = () => {
+    dispatch({ type: DISPLAY_ALERT })
+  }
 
   // form
   const changeFormValue = ({ key, value }) => {
@@ -205,15 +224,27 @@ const AppProvider = ({ children }) => {
 
       dispatch({
         type: LOGIN_USER,
-        payload: data
+        payload: data.user,
+        alert: {
+          show: true,
+          text: 'Login Berhasil',
+          type:'success'
+        }
       })
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: {
+          text: err.response.data.message,
+          type
+        }
       })
     }
-    clearModal()
+    displayAlert()
+    clearModal( 'login' )
   }
   const refreshToken = async () => {
     dispatch({ type: SETUP_AXIOS_BEGIN })
@@ -228,21 +259,41 @@ const AppProvider = ({ children }) => {
 
       dispatch({
         type: REFRESH_TOKEN,
-        payload: data
+        payload: data,
+        alert: {
+          show: true,
+          text: 'Refresh Token Berhasil',
+          type:'success'
+        }
       })
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type: 'warn'
+        }
       })
     }
     clearModal()
+    displayAlert()
   }
   const logoutUser = async () => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
 
-    dispatch({ type: LOGOUT_USER })
+    dispatch({ 
+      type: LOGOUT_USER, 
+      alert: {
+        show: true,
+        text: 'Logout Berhasil',
+        type: 'info',
+      }
+    })
+    displayAlert()
   }
 
   // CATEGORY
@@ -261,10 +312,17 @@ const AppProvider = ({ children }) => {
         storages: data.storages,
       })
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type 
+        }
       })
+      displayAlert()
     }
   }
   const createMasterData = async ({ form, url }) => {
@@ -276,16 +334,29 @@ const AppProvider = ({ children }) => {
         `http://localhost:3001/api/${url}`,
         form
       )
-      console.log(data)
-      clearModal( 'masterData' )
-
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+      
       getMasterData()
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal( 'masterData' )
+    displayAlert()
   }
   const updateMasterData = async ({ form, url }) => {
     try {
@@ -296,16 +367,29 @@ const AppProvider = ({ children }) => {
         `http://localhost:3001/api/${url}/${form.id}`,
         form
       )
-      console.log(data)
-      clearModal( 'masterData' )
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
 
       getMasterData()
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal( 'masterData' )
+    displayAlert()
   }
   const deleteMasterData = async ({ url, id }) => {
     try {
@@ -315,16 +399,29 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.delete(
         `http://localhost:3001/api/${url}/${id}`
       )
-      console.log(data)
-      clearModal()
-
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+      
       getMasterData()
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal()
+    displayAlert()
   }
 
   // DOCUMENT
@@ -333,15 +430,23 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.get(
         `http://localhost:3001/api/documents?limit=${limit}&${query}`,
       )
+      
       dispatch({
         type: GET_DOCUMENTS,
         documents: data.documents
       })
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
+      displayAlert()
     }
   }
   const getDocument = async ({ id }) => {
@@ -355,10 +460,17 @@ const AppProvider = ({ children }) => {
         document: data.document
       })
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
+      displayAlert()
     }
   }
   const createDocument = async ({ form }) => {
@@ -370,24 +482,59 @@ const AppProvider = ({ children }) => {
         `http://localhost:3001/api/documents`,
         form
       )
-      console.log(data)
-      // clearModal('document')
-    } catch (err) {
-      dispatch({ 
-        type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
       })
-    }
-  }
-  const updateDocument = async ({ form }) => {
-    try {
+
+    } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
       
-    } catch (err) {
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal('document')
+    displayAlert()
+  }
+  const updateDocument = async ({ form, id }) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken')
+      axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`
+
+      const { data } = await axios.put(
+        `http://localhost:3001/api/documents/${id}`,
+        form
+      )
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+
+    } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
+      dispatch({ 
+        type: SETUP_AXIOS_ERROR,
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
+      })
+    }
+    displayAlert()
   }
   const deleteDocument = async ({ id }) => {
     try {
@@ -397,34 +544,55 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.delete(
         `http://localhost:3001/api/documents/${id}`
       )
-      console.log(data)
-      clearModal()
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal()
+    displayAlert()
   }
 
   // PENALTY
-  const getPenalties = async () => {
+  const getPenalties = async ({ query }) => {
     try {
       const accessToken = localStorage.getItem('accessToken')
       axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`
       
       const { data } = await axios.get(
-        `http://localhost:3001/api/penalties`,
+        `http://localhost:3001/api/penalties?${query}`,
       )
       dispatch({ 
         type: GET_PENALTIES,
         penalties: data.penalties,
       })
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
+      displayAlert()
     }
   }
   const getPenalty = async ({id}) => {
@@ -440,10 +608,17 @@ const AppProvider = ({ children }) => {
         penalty: data.penalty,
       })
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
+      displayAlert()
     }
   }
   const createPenalty = async ({ form }) => {
@@ -455,15 +630,28 @@ const AppProvider = ({ children }) => {
         `http://localhost:3001/api/penalties`,
         form
       )
-      console.log(data)
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
       
-      clearModal('penalty')
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal('penalty')
+    displayAlert()
   }
   const updatePenalty = async ({ form, id }) => {
     try {
@@ -474,14 +662,28 @@ const AppProvider = ({ children }) => {
         `http://localhost:3001/api/penalties/${id}`,
         form
       )
-      console.log(data)
-      clearModal('penalty')
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal('penalty')
+    displayAlert()
   }
   const deletePenalty = async ({ id }) => {
     try {
@@ -491,14 +693,28 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.delete(
         `http://localhost:3001/api/penalties/${id}`,
       )
-      console.log(data)
-      clearModal('penalty')
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+      
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal('penalty')
+    displayAlert()
   }
 
   // RETURN
@@ -510,16 +726,23 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.post(
         `http://localhost:3001/api/returns`,
       )
-      console.log(data)
       dispatch({ 
         type: GET_RETURNS,
         returns: data.returns,
       })
+    
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
+      displayAlert()
     }
   }
   const getReturn = async ({ id }) => {
@@ -530,16 +753,23 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.get(
         `http://localhost:3001/api/returns/${id}`,
       )
-      console.log(data)
       dispatch({ 
         type: GET_RETURN,
         return: data.return,
       })
+
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
+      displayAlert()
     }
   }
   const createReturn = async ({ form }) => {
@@ -551,14 +781,28 @@ const AppProvider = ({ children }) => {
         `http://localhost:3001/api/returns`,
         form
       )
-      console.log(data)
-      clearModal('return')
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal('return')
+    displayAlert()
   }
   const updateReturn = async ({ form, id }) => {
     try {
@@ -569,14 +813,28 @@ const AppProvider = ({ children }) => {
         `http://localhost:3001/api/returns/${id}`,
         form
       )
-      console.log(data)
-      clearModal('return')
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal('return')
+    displayAlert()
   }
   const deleteReturn = async ({ id }) => {
     try {
@@ -586,34 +844,56 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.post(
         `http://localhost:3001/api/returns/${id}`,
       )
-      console.log(data)
-      clearModal('document')
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+      
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal('document')
+    displayAlert()
   }
 
   // TRANSACTION
-  const getTransactions = async () => {
+  const getTransactions = async ({ query }) => {
     try {
       const accessToken = localStorage.getItem('accessToken')
       axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`
       
       const { data } = await axios.get(
-        `http://localhost:3001/api/transactions`,
+        `http://localhost:3001/api/transactions?${query}`,
       )
       dispatch({ 
         type: GET_TRANSACTIONS,
         transactions: data.transactions,
       })
+
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
+      displayAlert()
     }
   }
   const getTransaction = async ({ id }) => {
@@ -624,16 +904,23 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.get(
         `http://localhost:3001/api/transactions/${id}`,
       )
-      console.log(data)
       dispatch({ 
         type: GET_TRANSACTION,
         transaction: data.transaction,
       })
+
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
+      displayAlert()
     }
   }
   const createTransaction = async ({ form }) => {
@@ -645,14 +932,28 @@ const AppProvider = ({ children }) => {
         `http://localhost:3001/api/transactions`,
         form
       )
-      console.log(data)
-      clearModal('transaction')
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal('transaction')
+    displayAlert()
   }
   const updateTransaction = async ({ form, id }) => {
     try {
@@ -663,14 +964,28 @@ const AppProvider = ({ children }) => {
         `http://localhost:3001/api/transactions/${id}`,
         form
       )
-      console.log(data)
-      clearModal('transaction')
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal('transaction')
+    displayAlert()
   }
   const deleteTransaction = async ({ id }) => {
     try {
@@ -680,42 +995,57 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.delete(
         `http://localhost:3001/api/transactions/${id}`,
       )
-      console.log(data)
-      clearModal('transaction')
-      dispatch({ 
-        type: GET_MASTER_DATA,
-        categories: data.categories,
-        specializations: data.specializations,
-        storages: data.storages,
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
       })
+
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal('transaction')
+    displayAlert()
   }
 
   // USER
-  const getUsers = async () => {
+  const getUsers = async ({ query = '' }) => {
     dispatch({ type: SETUP_AXIOS_BEGIN })
     try {
       const accessToken = localStorage.getItem('accessToken')
       axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`
       
       const { data } = await axios.get(
-        'http://localhost:3001/api/users'
+        `http://localhost:3001/api/users?${query}`
       )
-
       dispatch({
         type: GET_USERS,
         users: data.users
       })
+
     } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
+      displayAlert()
     }
   }
   const getUserLogin = async () => {
@@ -727,39 +1057,53 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.get(
         `http://localhost:3001/api/user`
       )
-
       dispatch({
         type: GET_USER_LOGIN,
         user: data.user
       })
+
     } catch (err) {
-      console.log(err)
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
+      displayAlert()
     }
   }
   const getUser = async ({ userId }) => {
     dispatch({ type: SETUP_AXIOS_BEGIN })
     try {
+      dispatch({ type: SET_USER_NULL })
       const accessToken = localStorage.getItem('accessToken')
       axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`
+      
       
       const { data } = await axios.get(
         `http://localhost:3001/api/users/${userId}`
       )
-
       dispatch({
         type: GET_USER,
         user: data.user
       })
+
     } catch (err) {
-      console.log(err)
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
+      displayAlert()
     }
   }
   const createUser = async ({ user }) => {
@@ -771,58 +1115,127 @@ const AppProvider = ({ children }) => {
         `http://localhost:3001/api/users`,
         user
       )
-      console.log(data)
-      clearModal( 'user' )
-
-      getUsers()
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+      
+      getUsers({})
     } catch (err) {
-      console.log(err)
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal( 'user' )
+    displayAlert()
   }
   const changeProfilePicture = async ({ form, id }) => {
     try {
       const accessToken = localStorage.getItem('accessToken')
       axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`
       
-      const { data } = await axios.post(
+      const { data } = await axios.put(
         `http://localhost:3001/api/users/change-profile-picture/${id}`,
         form
       )
-      console.log(data)
-      clearModal( 'changeProfilePicture' )
-
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+      
     } catch (err) {
-      console.log(err)
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal( 'changeProfilePicture' )
+    displayAlert()
   }
   const changeUserPassword = async ({ form, id }) => {
     try {
       const accessToken = localStorage.getItem('accessToken')
       axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`
       
-      const { data } = await axios.post(
-        `http://localhost:3001/api/users/reset-password/${id}`,
+      const { data } = await axios.put(
+        `http://localhost:3001/api/users/change-password/${id}`,
         form
       )
-      console.log(data)
-      clearModal( 'changeUserPassword' )
-
-      getMasterData()
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+      
+      getUserLogin()
     } catch (err) {
-      console.log(err)
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal( 'changeUserPassword' )
+    displayAlert()
+  }
+  const changeUserProfile = async ({ form, id }) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken')
+      axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`
+      
+      const { data } = await axios.put(
+        `http://localhost:3001/api/users/${id}`,
+        form
+      )
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+
+      getUserLogin()
+    } catch (err) {
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
+      dispatch({ 
+        type: SETUP_AXIOS_ERROR,
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
+      })
+    }
+    clearModal( 'user' )
+    displayAlert()
   }
   const resetUserPassword = async ({ id }) => {
     try {
@@ -832,16 +1245,28 @@ const AppProvider = ({ children }) => {
       const { data } = await axios.put(
         `http://localhost:3001/api/users/reset-password/${id}`,
       )
-      console.log(data)
-      clearModal()
-
+      dispatch({
+        type: SETUP_AXIOS_SUCCESS,
+        alert: {
+          text: data.message,
+          type:'success'
+        }
+      })
+      
     } catch (err) {
-      console.log(err)
+      let type = CODE[err.response.status]
+      if( !type ) type = 'error'
+      
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        payload: { message: err.response.data.message }
+        alert: { 
+          text: err.response.data.message,
+          type,
+        }
       })
     }
+    clearModal('changePassword')
+    displayAlert()
   }
 
   useEffect(() => {
@@ -850,9 +1275,9 @@ const AppProvider = ({ children }) => {
       if( accessToken ) {
         getUserLogin()
       }
-
       setInit(true)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [init])
 
   return (
@@ -864,8 +1289,10 @@ const AppProvider = ({ children }) => {
         clearFilters,
         changePage,
         
+        displayAlert,
         displayModal,
         clearModal,
+        setAlert,
         
         changeFormValue,
         changeFormState,
@@ -909,6 +1336,7 @@ const AppProvider = ({ children }) => {
         createUser,
         changeProfilePicture,
         changeUserPassword,
+        changeUserProfile,
         resetUserPassword
       }}
     >

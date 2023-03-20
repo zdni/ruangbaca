@@ -5,7 +5,7 @@ import TransactionService from '../services/TransactionService.js'
 class TransactionController {
   async index(req, res){
     try {
-      const processQuery = await TransactionService.processQuerySearchDocument(req)
+      const processQuery = await TransactionService.processQuerySearch(req)
       if(!processQuery.status) throw { code: data.code, message: "ERROR_QUERY_SEARCH" }
       
       const transactions = await Transaction.find(processQuery.query)
@@ -30,8 +30,8 @@ class TransactionController {
   async store(req, res) {
     try {
       const data = await TransactionService.processData(req)
-      console.log(data)
       if (!data.status) throw { code: data.code, message: data.message }
+      
       const newTransaction = new Transaction(data.data)
       const transaction = await newTransaction.save()
       if(!transaction) { throw { code: 404, message: "FAILED_CREATE_TRANSACTION" } }

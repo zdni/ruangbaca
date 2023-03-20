@@ -17,7 +17,8 @@ const Schema = mongoose.Schema({
     type: String,
     enum: [
       'process',
-      'done'
+      'done',
+      'cancel'
     ],
     default: 'process'
   },

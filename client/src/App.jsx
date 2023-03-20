@@ -1,5 +1,7 @@
 import Div100vh from 'react-div-100vh'
+import { ToastContainer } from 'react-toastify'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import 'react-toastify/dist/ReactToastify.css'
 
 import './App.css'
 import { Navbar } from './components/navbar/Navbar'
@@ -26,6 +28,7 @@ import {
   LoginModal,
   LogoutModal,
   MenuModal,
+  PenaltyModal,
   ResetPasswordModal,
   SearchModal,
   TransactionModal,
@@ -105,9 +108,16 @@ function App() {
         <LoginModal />
         <LogoutModal />
         <MenuModal />
+        <PenaltyModal />
         <ResetPasswordModal />
         <SearchModal />
         <TransactionModal />
+        <ToastContainer 
+          autoClose={1500}
+          pauseOnFocusLoss={false}
+          // limit={1}
+        />
+
       </Div100vh>
     </Router>
   )

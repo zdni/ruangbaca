@@ -12,5 +12,4 @@ export { Select } from './Forms/Select'
 export { Textarea } from './Forms/Textarea'
 
 export { Badge } from './Badge'
-export { DocumentCoverImage } from './DocumentCoverImage'
 export { Item } from './Item'

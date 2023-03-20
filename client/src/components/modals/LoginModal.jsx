@@ -35,8 +35,8 @@ export const LoginModal = () => {
       }
       loginUser({ userLogin })
       // navigate(`${ MY_ACCOUNT_LINK.path }`)
+      clearModal( 'login' )
     }
-    clearModal( 'login' )
   }
 
   return (

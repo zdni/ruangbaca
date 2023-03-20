@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom'
 import 'swiper/css'
 
 import { DocumentCard } from '../cards'
+import { NotFoundData } from '../NotFoundData'
 
 export const CarouselDocuments = ({ documents }) => {
+
   return (
     <>
       <div className='flex flex-col'>
@@ -19,6 +21,11 @@ export const CarouselDocuments = ({ documents }) => {
           </p>
         </div>
       </div>
+      {(
+        documents.length === 0
+          &&
+        <NotFoundData />
+      )}
       <Swiper
         spaceBetween={20}
         slidesPerView={1}

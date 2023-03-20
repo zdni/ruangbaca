@@ -9,7 +9,7 @@ import { classNames } from '../utils/classNames'
 import { useAppContext } from '../context/appContext'
 
 export const MasterData = () => {
-  const { data, displayModal, getMasterData } = useAppContext()
+  const { changeFormState, data, displayModal, getMasterData } = useAppContext()
   const { categories, specializations, storages } = data
   
   const tabs = ['Kategori Buku', 'Peminatan Jurusan', 'Lokasi Penyimpanan']
@@ -24,12 +24,18 @@ export const MasterData = () => {
   
   return (
     <>
-      <Button text='Tambah Data' onClick={() => {displayModal({
-        modal: {
-          id: 'form-master-data-modal',
-          title: 'Tambah Data',
-          url: url 
-        }})}}>
+      <Button text='Tambah Data' onClick={() => {
+        changeFormState({
+          value: 'create'
+        })
+        displayModal({
+          modal: {
+            id: 'form-master-data-modal',
+            title: 'Tambah Data',
+            url: url 
+          }
+        })
+      }}>
         <PlusIcon className="mr-2 h-4 w-4 cursor-pointer" />
       </Button>
       <div className="w-full py-6 sm:px-0">

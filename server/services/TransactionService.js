@@ -52,6 +52,7 @@ class TransactionService {
     try {
       const {
         status,
+        userId
       } = req.query
 
       let query = {}
@@ -59,7 +60,15 @@ class TransactionService {
       if(status && status !== 'all') {
         query['status'] = status
       }
-
+      if(status && status === 'late') {
+        query['status'] = {
+          $in: ['late', 'late_done', 'paid_done']
+        }
+      }
+      if(userId) {
+        query['userId'] = userId
+      }
+      
       return {
         status: true,
         query

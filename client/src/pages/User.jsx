@@ -22,7 +22,7 @@ export const User = () => {
     <div className="flex flex-col items-center">
       {(
         user &&
-        <DetailUserCard user={user} />
+        <DetailUserCard />
       )}
     </div>
   )

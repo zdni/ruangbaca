@@ -108,7 +108,7 @@ class UserService {
       if(newPassword !== confirmPassword) { return { status: false, code: 403, message: "WRONG_CONFIRM_PASSWORD" } }
 
       let salt = await bcrypt.genSalt(10)
-      let hash = await bcrypt.hash(password, salt)
+      let hash = await bcrypt.hash(newPassword, salt)
 
       return {
         status: true,

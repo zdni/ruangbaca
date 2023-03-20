@@ -10,7 +10,7 @@ import { BaseModal } from './BaseModal'
 import { useAppContext } from '../../context/appContext'
 
 export const FilterUserModal = () => {
-  const { changeFormValue, form, getUsers, modal, userTypeOptions } = useAppContext()
+  const { changeFormValue, clearModal, form, getUsers, modal, userTypeOptions } = useAppContext()
   const { searchUser } = form
 
   const handleChange = (e) => {
@@ -25,8 +25,12 @@ export const FilterUserModal = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    let query = `name=${searchUser.name}&role=${searchUser.role}`
 
-    getUsers()
+    getUsers({
+      query
+    })
+    clearModal()
   }
 
   return (

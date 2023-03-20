@@ -1,7 +1,6 @@
 export { DataCard } from './DataCard' 
 export { DetailUserCard } from './DetailUserCard'
 export { DocumentCard } from './DocumentCard'
-export { DocumentInformationCard } from './DocumentInformationCard'
 export { DocumentItemDetailCard } from './DocumentItemDetailCard'
 export { TransactionInformationCard } from './TransactionInformationCard'
 export { UserCard } from './UserCard'

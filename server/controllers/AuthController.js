@@ -38,11 +38,20 @@ class AuthController {
       const accessToken = await generateAccessToken(payload)
       const refreshToken = await generateRefreshToken(payload)
 
+      let data = {
+        name: user.name,
+        role: user.role,
+        idNumber: user.idNumber
+      }
+
+      if(user.role === 'student') {
+        data.classYear = user.classYear
+      }
+
       return res.status(200).json({
         status: true,
         message: "LOGIN_SUCCESS",
-        name: user.name,
-        role: user.role,
+        user: data,
         accessToken,
         refreshToken,
       })

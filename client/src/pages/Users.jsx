@@ -11,7 +11,7 @@ export const Users = () => {
   const { users } = data
 
   useEffect(() => {
-    getUsers()
+    getUsers({})
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
