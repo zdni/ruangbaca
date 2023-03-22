@@ -10,7 +10,7 @@ import { useAppContext } from '../context/appContext'
 import { DOCUMENT_FORM_LINK } from "../utils/links"
 
 export const Documents = () => {
-  const { data, displayModal, getDocuments } = useAppContext()
+  const { data, displayModal, getDocuments, isLoading, user } = useAppContext()
   const { documents } = data
   const [searchParams] = useSearchParams()
 
@@ -28,34 +28,44 @@ export const Documents = () => {
 
   return (
     <>
-      <Link to={{pathname: DOCUMENT_FORM_LINK.path}}>
-        <Button text='Tambah Dokumen' >
-          <DocumentPlusIcon className='h-6 w-6' />
-        </Button>
-      </Link>
-      <div className='flex flex-col justify-between sm:flex-row mb-2 mt-3 items-end'>
-        <p className="font-medium">
-          Semua Dokumen
-        </p>
-        <p className='text-xs text-gray-500'>
-          <button className='hover:underline' onClick={() => displayModal({
-            modal: {
-              id: 'search-modal', 
-              title: 'Pencarian Lanjutan'
-            }
-          })}>
-            Filter Dokumen
-          </button>
-        </p>
-      </div>
-      <div className='items-center flex flex-row flex-wrap gap-3'>
-        {(documents && documents.map((item) => (
-          <DocumentCard 
-            document={item}
-            key={item._id}
-          />
-        )))}
-      </div>
+      {(
+        !isLoading
+          &&
+        <>
+          {(
+            user.role === 'admin'
+              &&
+            <Link to={{pathname: DOCUMENT_FORM_LINK.path}}>
+              <Button text='Tambah Dokumen' >
+                <DocumentPlusIcon className='h-6 w-6' />
+              </Button>
+            </Link>
+          )}
+          <div className='flex flex-col justify-between sm:flex-row mb-2 mt-3 items-end'>
+            <p className="font-medium">
+              Semua Dokumen
+            </p>
+            <p className='text-xs text-gray-500'>
+              <button className='hover:underline' onClick={() => displayModal({
+                modal: {
+                  id: 'search-modal', 
+                  title: 'Pencarian Lanjutan'
+                }
+              })}>
+                Filter Dokumen
+              </button>
+            </p>
+          </div>
+          <div className='items-center flex flex-row flex-wrap gap-3'>
+            {(documents && documents.map((item) => (
+              <DocumentCard 
+                document={item}
+                key={item._id}
+              />
+            )))}
+          </div>
+        </>
+      )}
     </>
   )
 }

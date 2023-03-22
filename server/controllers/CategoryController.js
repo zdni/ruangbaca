@@ -78,7 +78,7 @@ class CategoryController {
         req.body,
         { new: true }
       )
-      if(!category) { throw { code: 500, message: "FORM_UPDATE_FAILED" } }
+      if(!category) { throw { code: 500, message: "CATEGORY_UPDATE_FAILED" } }
 
       return res.status(200).json({
         status: true,

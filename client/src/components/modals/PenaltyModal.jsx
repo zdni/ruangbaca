@@ -26,8 +26,8 @@ export const PenaltyModal = () => {
     createPenalty({
       form: {
         ...form.penalty,
-        transaction_id: modal.data._id,
-        user_id: modal.data.userId._id
+        transactionId: modal.data._id,
+        userId: modal.data.userId._id
       },
     })
     updateTransaction({

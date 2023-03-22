@@ -18,10 +18,10 @@ const Schema = mongoose.Schema({
     enum: [
       'submission',
       'approve',
-      'done',
-      'late',
-      'late_done',
-      'paid_done',
+      'done',   // create return
+      'late',   // create penalty
+      'late_done',  // create return
+      'paid_done',  // update penalty to done
       'cancel'
     ],
     default: 'submission'

@@ -5,7 +5,7 @@ import { DetailUserCard } from '../components/cards'
 import { useAppContext } from '../context/appContext'
 
 export const User = () => {
-  const { data, getUser } = useAppContext()
+  const { data, getUser, isLoading } = useAppContext()
   const { user } = data
   
   const [searchParams] = useSearchParams()
@@ -21,8 +21,9 @@ export const User = () => {
   return (
     <div className="flex flex-col items-center">
       {(
-        user &&
-        <DetailUserCard />
+        !isLoading && user 
+          &&
+        <DetailUserCard user={user} />
       )}
     </div>
   )

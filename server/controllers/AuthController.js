@@ -39,9 +39,12 @@ class AuthController {
       const refreshToken = await generateRefreshToken(payload)
 
       let data = {
+        _id: user._id,
+        idNumber: user.idNumber,
         name: user.name,
         role: user.role,
-        idNumber: user.idNumber
+        username: user.username,
+        image: user.image,
       }
 
       if(user.role === 'student') {

@@ -55,7 +55,7 @@ class PenaltyService {
       } = req.query
 
       // query where
-      if(!status) status = 'process'
+      // if(!status) status = 'process'
       if(userId) {
         const checkUserId = await checkValidationObjectId(userId, User, "USER")
         if(checkUserId.status) query['userId'] = userId

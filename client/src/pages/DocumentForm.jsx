@@ -22,6 +22,7 @@ export const DocumentForm = () => {
     form, 
     getDocument, 
     getMasterData, 
+    isLoading,
     updateDocument 
   } = useAppContext()
   const { categories, document, specializations, storages } = data
@@ -133,153 +134,159 @@ export const DocumentForm = () => {
   const navigate = useNavigate()
 
   return (
-    <form className='flex flex-col gap-1' encType="multipart/form-data">
-      <div className="flex flex-row gap-2">
-        <Select 
-          handleChange={handleChange}
-          id='category' 
-          label='Tipe Dokumen' 
-          options={documentTypeOptions} 
-          selectedValue={form.document.category}
-          keyText='text'
-          keyValue='value'
-        />
-        <InputText 
-          handleChange={handleChange}
-          id='code' 
-          label='Kode Dokumen' 
-          value={form.document.code}
-        />
-      </div>
-      <InputText
-        handleChange={handleChange} 
-        id='title' 
-        label='Judul Dokumen' 
-        value={form.document.title}
-      />
-      <InputText
-        handleChange={handleChange} 
-        id='writer' 
-        label='Penulis' 
-        value={form.document.writer}
-      />
-      <div className="flex flex-row gap-2">
-        <InputText 
-          handleChange={handleChange}
-          id='year' 
-          label='Tahun Terbit' 
-          value={form.document.year}
-        />
-        <InputNumber 
-          handleChange={handleChange}
-          id='stock'
-          label='Stok'
-          placeholder="Stok Dokumen"
-          value={form.document.stock}
-        />
-      </div>
+    <>
       {(
-        form.document.category === 'book'
+        !isLoading
           &&
-        <div className="my-4">
-          <InputText
-            handleChange={handleChange} 
-            id='publisher' 
-            label='Penerbit' 
-            value={form.document.publisher}
-          />
-          <Select 
-            handleChange={handleChange}
-            id='categoryId' 
-            label='Kategori Buku' 
-            options={categories}
-            selectedValue={form.document.categoryId || ''}
-            keyText='name'
-            keyValue='_id' 
-          />
-        </div>
-      )}
-      {( 
-        form.document.category === 'theses' 
-          && 
-        <div className="my-4">
+        <form className='flex flex-col gap-1' encType="multipart/form-data">
           <div className="flex flex-row gap-2">
-            <InputText
-              handleChange={handleChange} 
-              id='studentIdNumber' 
-              label='NIM' 
-              value={form.document.studentIdNumber}
-            />
             <Select 
               handleChange={handleChange}
-              id='specializationId' 
-              label='Peminatan' 
-              options={specializations}
-              selectedValue={form.document.specializationId || ''} 
-              keyText='name'
-              keyValue='_id'
+              id='category' 
+              label='Tipe Dokumen' 
+              options={documentTypeOptions} 
+              selectedValue={form.document.category}
+              keyText='text'
+              keyValue='value'
+            />
+            <InputText 
+              handleChange={handleChange}
+              id='code' 
+              label='Kode Dokumen' 
+              value={form.document.code}
             />
           </div>
           <InputText
             handleChange={handleChange} 
-            id='mentorMain' 
-            label='Pembimbing Utama' 
-            value={form.document.mentorMain}
+            id='title' 
+            label='Judul Dokumen' 
+            value={form.document.title}
           />
           <InputText
             handleChange={handleChange} 
-            id='mentorSecond' 
-            label='Pembimbing Kedua' 
-            value={form.document.mentorSecond}
+            id='writer' 
+            label='Penulis' 
+            value={form.document.writer}
           />
-          <InputText
-            handleChange={handleChange} 
-            id='examinerMain' 
-            label='Penguji Utama' 
-            value={form.document.examinerMain}
+          <div className="flex flex-row gap-2">
+            <InputText 
+              handleChange={handleChange}
+              id='year' 
+              label='Tahun Terbit' 
+              value={form.document.year}
+            />
+            <InputNumber 
+              handleChange={handleChange}
+              id='stock'
+              label='Stok'
+              placeholder="Stok Dokumen"
+              value={form.document.stock}
+            />
+          </div>
+          {(
+            form.document.category === 'book'
+              &&
+            <div className="my-4">
+              <InputText
+                handleChange={handleChange} 
+                id='publisher' 
+                label='Penerbit' 
+                value={form.document.publisher}
+              />
+              <Select 
+                handleChange={handleChange}
+                id='categoryId' 
+                label='Kategori Buku' 
+                options={categories}
+                selectedValue={form.document.categoryId || ''}
+                keyText='name'
+                keyValue='_id' 
+              />
+            </div>
+          )}
+          {( 
+            form.document.category === 'theses' 
+              && 
+            <div className="my-4">
+              <div className="flex flex-row gap-2">
+                <InputText
+                  handleChange={handleChange} 
+                  id='studentIdNumber' 
+                  label='NIM' 
+                  value={form.document.studentIdNumber}
+                />
+                <Select 
+                  handleChange={handleChange}
+                  id='specializationId' 
+                  label='Peminatan' 
+                  options={specializations}
+                  selectedValue={form.document.specializationId || ''} 
+                  keyText='name'
+                  keyValue='_id'
+                />
+              </div>
+              <InputText
+                handleChange={handleChange} 
+                id='mentorMain' 
+                label='Pembimbing Utama' 
+                value={form.document.mentorMain}
+              />
+              <InputText
+                handleChange={handleChange} 
+                id='mentorSecond' 
+                label='Pembimbing Kedua' 
+                value={form.document.mentorSecond}
+              />
+              <InputText
+                handleChange={handleChange} 
+                id='examinerMain' 
+                label='Penguji Utama' 
+                value={form.document.examinerMain}
+              />
+              <InputText
+                handleChange={handleChange} 
+                id='examinerSecond' 
+                label='Penguji Kedua' 
+                value={form.document.examinerSecond}
+              />
+              <InputText
+                handleChange={handleChange} 
+                id='examinerThird' 
+                label='Penguji Ketga' 
+                value={form.document.examinerThird}
+              />
+            </div> 
+          )}
+          <Select 
+            handleChange={handleChange}
+            id='storageId' 
+            label='Lokasi Penyimpanan' 
+            options={storages}
+            selectedValue={form.document.storageId || ''} 
+            keyText='name'
+            keyValue='_id'
           />
-          <InputText
-            handleChange={handleChange} 
-            id='examinerSecond' 
-            label='Penguji Kedua' 
-            value={form.document.examinerSecond}
+          <InputFile
+            id='cover' 
+            label='Cover' 
+            handleChange={handleChangeFile}
           />
-          <InputText
-            handleChange={handleChange} 
-            id='examinerThird' 
-            label='Penguji Ketga' 
-            value={form.document.examinerThird}
-          />
-        </div> 
+          <div className="mt-4">
+            <Button 
+              text={ form.document.id === null ? 'Tambah Dokumen' : 'Simpan Perubahan'} 
+              type="submit" 
+              onClick={handleSubmit} 
+            />
+            <Button 
+              text='Kembali' 
+              isPrimary={false}
+              onClick={() => {
+                navigate('/documents')
+              }}
+            />
+          </div>
+        </form>
       )}
-      <Select 
-        handleChange={handleChange}
-        id='storageId' 
-        label='Lokasi Penyimpanan' 
-        options={storages}
-        selectedValue={form.document.storageId || ''} 
-        keyText='name'
-        keyValue='_id'
-      />
-      <InputFile
-        id='cover' 
-        label='Cover' 
-        handleChange={handleChangeFile}
-      />
-      <div className="mt-4">
-        <Button 
-          text={ form.document.id === null ? 'Tambah Dokumen' : 'Simpan Perubahan'} 
-          type="submit" 
-          onClick={handleSubmit} 
-        />
-        <Button 
-          text='Kembali' 
-          isPrimary={false}
-          onClick={() => {
-            navigate('/documents')
-          }}
-        />
-      </div>
-    </form>
+    </>
   )
 }

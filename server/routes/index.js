@@ -71,14 +71,14 @@ router.delete('/transactions/:id', auth(), Transaction.destroy)
 router.get('/penalties', auth(), Penalty.index)
 router.get('/penalties/:id', auth(), Penalty.show)
 router.post('/penalties', auth(), Penalty.store)
-router.put('/penalties:id', auth(), Penalty.update)
+router.put('/penalties/:id', auth(), Penalty.update)
 router.delete('/penalties/:id', auth(), Penalty.destroy)
 
 // returns
 router.get('/returns', auth(), Return.index)
 router.get('/returns/:id', auth(), Return.show)
 router.post('/returns', auth(), Return.store)
-router.put('/returns:id', auth(), Return.update)
+router.put('/returns/:id', auth(), Return.update)
 router.delete('/returns/:id', auth(), Return.destroy)
 
 export default router

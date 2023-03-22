@@ -169,7 +169,6 @@ const AppProvider = ({ children }) => {
       return response
     },
     (error) => {
-      console.log('error: ', error)
       if (error.response.status === 401) {
         logoutUser()
       }
@@ -670,6 +669,7 @@ const AppProvider = ({ children }) => {
         }
       })
 
+      getTransactions({})
     } catch (err) {
       let type = CODE[err.response.status]
       if( !type ) type = 'error'
@@ -718,13 +718,13 @@ const AppProvider = ({ children }) => {
   }
 
   // RETURN
-  const getReturns = async () => {
+  const getReturns = async ({ query }) => {
     try {
       const accessToken = localStorage.getItem('accessToken')
       axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`
       
-      const { data } = await axios.post(
-        `http://localhost:3001/api/returns`,
+      const { data } = await axios.get(
+        `http://localhost:3001/api/returns?${query}`,
       )
       dispatch({ 
         type: GET_RETURNS,
@@ -789,6 +789,7 @@ const AppProvider = ({ children }) => {
         }
       })
 
+      getTransactions({})
     } catch (err) {
       let type = CODE[err.response.status]
       if( !type ) type = 'error'
@@ -972,6 +973,7 @@ const AppProvider = ({ children }) => {
         }
       })
 
+      getTransactions({})
     } catch (err) {
       let type = CODE[err.response.status]
       if( !type ) type = 'error'
@@ -1156,6 +1158,7 @@ const AppProvider = ({ children }) => {
         }
       })
       
+      getUserLogin()
     } catch (err) {
       let type = CODE[err.response.status]
       if( !type ) type = 'error'
@@ -1188,7 +1191,11 @@ const AppProvider = ({ children }) => {
         }
       })
       
-      getUserLogin()
+      clearModal( 'changePassword' )
+      displayAlert()
+      setTimeout(() => {
+        logoutUser()
+      }, 1500)
     } catch (err) {
       let type = CODE[err.response.status]
       if( !type ) type = 'error'
@@ -1200,9 +1207,9 @@ const AppProvider = ({ children }) => {
           type,
         }
       })
+      clearModal( 'changePassword' )
+      displayAlert()
     }
-    clearModal( 'changeUserPassword' )
-    displayAlert()
   }
   const changeUserProfile = async ({ form, id }) => {
     try {
@@ -1234,7 +1241,7 @@ const AppProvider = ({ children }) => {
         }
       })
     }
-    clearModal( 'user' )
+    clearModal()
     displayAlert()
   }
   const resetUserPassword = async ({ id }) => {

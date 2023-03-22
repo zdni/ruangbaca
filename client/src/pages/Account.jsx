@@ -91,11 +91,11 @@ export const Account = () => {
     changeFormValue({
       key: 'user',
       value: {
-      ...form.user,
-      id: user._id,
-      classYear: user.classYear,
-      idNumber: user.idNumber,
-      name: user.name,
+        ...form.user,
+        id: user._id,
+        classYear: user.classYear,
+        idNumber: user.idNumber,
+        name: user.name,
       }
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,7 +104,7 @@ export const Account = () => {
   const tabs = ['Biodata', 'Pengaturan Akun'];
   return (
     <div className="flex flex-col items-center">
-      <DetailUserCard />
+      <DetailUserCard user={user} />
       <div className="w-full py-6 sm:px-0">
         <Tab.Group>
           <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">

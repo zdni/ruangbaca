@@ -169,6 +169,7 @@ const reducer = (state, action) => {
       ...state, 
       alert: action.alert,
       isAuthenticated: true, 
+      isLoading: false,
       user: action.payload
     }
   }
@@ -176,6 +177,7 @@ const reducer = (state, action) => {
     return {
       ...state,
       alert: action.alert,  
+      isLoading: false,
       user: {
         ...state.user,
         accessToken: action.accessToken,
@@ -188,6 +190,7 @@ const reducer = (state, action) => {
       ...state, 
       alert: action.alert,
       isAuthenticated: false, 
+      isLoading: false,
       user: null 
     }
   }
@@ -204,7 +207,8 @@ const reducer = (state, action) => {
         categories: action.categories,
         specializations: action.specializations,
         storages: action.storages,
-      }
+      },
+      isLoading: false,
     }
   }
 
@@ -215,7 +219,8 @@ const reducer = (state, action) => {
       data: {
         ...state.data,
         documents: action.documents,
-      }
+      },
+      isLoading: false,
     }
   }
   if ( action.type === GET_DOCUMENT ) {
@@ -224,58 +229,64 @@ const reducer = (state, action) => {
       data: {
         ...state.data,
         document: action.document,
-      }
+      },
+      isLoading: false,
     }
   }
 
   // PENALTY
   if ( action.type === GET_PENALTIES ) {
     return {
-     ...state,
+      ...state,
       data: {
        ...state.data,
         penalties: action.penalties,
-      }
+      },
+      isLoading: false,
     }
   }
   if ( action.type === GET_PENALTY ) {
     return {
-     ...state,
+      ...state,
       data: {
        ...state.data,
         penalty: action.penalty,
-      }
+      },
+      isLoading: false,
     }
   }
 
   // RETURN
   if ( action.type === GET_RETURNS ) {
     return {
-     ...state,
+      ...state,
       data: {
        ...state.data,
         returns: action.returns,
-      }
+      },
+      isLoading: false,
     }
   }
   if ( action.type === GET_RETURN ) {
     return {
-     ...state,
+      ...state,
       data: {
        ...state.data,
         return: action.return,
-      }
+      },
+      isLoading: false,
     }
   }
 
   // TRANSACTION
   if ( action.type === GET_TRANSACTIONS ) {
     return {
-    ...state,
+      ...state,
       data: {
       ...state.data,
         transactions: action.transactions,
-      }
+      },
+      isLoading: false,
     }
   }
   if ( action.type === GET_TRANSACTION ) {
@@ -284,7 +295,8 @@ const reducer = (state, action) => {
       data: {
       ...state.data,
         transaction: action.transaction,
-      }
+      },
+      isLoading: false,
     }
   }
 
@@ -295,7 +307,8 @@ const reducer = (state, action) => {
       data: {
         ...state.data,
         users: action.users
-      }
+      },
+      isLoading: false,
     }
   }
   if ( action.type === SET_USER_NULL ) {
@@ -304,7 +317,8 @@ const reducer = (state, action) => {
       data: {
         ...state.data,
         user: null
-      }
+      },
+      isLoading: false,
     }
   }
   if ( action.type === GET_USER ) {
@@ -313,14 +327,16 @@ const reducer = (state, action) => {
       data: {
         ...state.data,
         user: action.user
-      }
+      },
+      isLoading: false,
     }
   }
   if ( action.type === GET_USER_LOGIN ) {
     return {
       ...state,
       isAuthenticated: true,
-      user: action.user
+      isLoading: false,
+      user: action.user,
     }
   }
   if ( action.type === CHANGE_USER_PASSWORD ) {
@@ -329,7 +345,8 @@ const reducer = (state, action) => {
       form: {
         ...state.form,
         changePassword: initialState.form.changePassword,
-      }
+      },
+      isLoading: false,
     }
   }
 

@@ -8,7 +8,7 @@ import { useAppContext } from "../context/appContext"
 import { DOCUMENT_FORM_LINK } from "../utils/links"
 
 export const Document = () => {
-  const { data, displayModal, getDocument, user } = useAppContext()
+  const { data, displayModal, getDocument, isLoading, user } = useAppContext()
   const { document } = data
   const [searchParams] = useSearchParams()
   const types = {
@@ -25,7 +25,7 @@ export const Document = () => {
   return (
     <>
       {(
-        document
+        !isLoading && document
           &&
         <>
           <p>Detail Dokumen</p>

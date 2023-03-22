@@ -10,13 +10,13 @@ export const Textarea = ({
       {(label && <label className='text-sm text-gray-800' htmlFor={id}>{label}</label>)}
       <textarea 
         className='form-textarea mt-1 block w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0' 
-        id={label} 
-        name={label} 
+        id={id} 
+        name={id} 
         onChange={handleChange}
         placeholder={placeholder}
-        rows={5} 
+        rows={5}
+        value={value} 
       >
-        {value}
       </textarea>
     </div>
   )
