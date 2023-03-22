@@ -10,17 +10,36 @@ class DocumentController {
       const processQuery = await DocumentService.processQuerySearchDocument(req)
       if(!processQuery.status) throw { code: data.code, message: "ERROR_QUERY_SEARCH" }
 
-      const documents = await Document.find(processQuery.query)
-        .limit(req.query.limit)
+      let result = Document.find(processQuery.query)
+
+      // setup pagination
+      const page = Number(req.query.page)
+      const limit = Number(req.query.limit)
+      const skip = (page !== 0 && limit !== 0) ? (page - 1) * limit : 0
+      
+      result = await result
+        .skip(skip)
+        .limit(limit)
         .populate('categoryId')
         .populate('specializationId')
         .populate('storageId')
+
+      const documents = await result
+      const totalDocuments = await Document.countDocuments(processQuery.query)
+
+      // const documents = await Document.find(processQuery.query)
+      //   .skip(skip)
+      //   .limit(limit)
+      //   .populate('categoryId')
+      //   .populate('specializationId')
+      //   .populate('storageId')
       if(!documents) { throw { code: 404, message: "DOCUMENT_DATA_NOT_FOUND" } }
       
       return res.status(200).json({
         status: true,
         message: "LIST_DOCUMENT",
-        documents
+        documents,
+        totalDocuments,
       })
     } catch (err) {
       if(!err.code) { err.code = 500 }

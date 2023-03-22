@@ -219,6 +219,7 @@ const reducer = (state, action) => {
       data: {
         ...state.data,
         documents: action.documents,
+        totalDocuments: action.totalDocuments,
       },
       isLoading: false,
     }

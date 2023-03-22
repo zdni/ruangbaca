@@ -9,6 +9,7 @@ export const Home = () => {
 
   useEffect(() => {
     getDocuments({
+      page: 1,
       limit: 10
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps

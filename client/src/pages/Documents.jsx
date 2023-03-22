@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import { useSearchParams } from 'react-router-dom'
 import { DocumentPlusIcon } from "@heroicons/react/24/outline"
@@ -9,10 +9,23 @@ import { DocumentCard } from "../components/cards"
 import { useAppContext } from '../context/appContext'
 import { DOCUMENT_FORM_LINK } from "../utils/links"
 
+import { Pagination } from '../components/pagination/Pagination'
+
+let PageSize = 10
+
 export const Documents = () => {
   const { data, displayModal, getDocuments, isLoading, user } = useAppContext()
-  const { documents } = data
+  const { documents, totalDocuments } = data
   const [searchParams] = useSearchParams()
+  
+  const [currentPage, setCurrentPage] = useState(1)
+  const [firstPageIndex, setFirstPageIndex] = useState(0)
+  
+  useMemo(() => {
+    setFirstPageIndex(currentPage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage])
+
 
   useEffect(() => {
     let query = ''
@@ -21,15 +34,18 @@ export const Documents = () => {
     }
 
     getDocuments({
+      page: firstPageIndex,
+      limit: PageSize,
       query 
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams])
+  }, [searchParams, currentPage])
+
 
   return (
     <>
       {(
-        !isLoading
+        !isLoading && documents && user
           &&
         <>
           {(
@@ -57,13 +73,20 @@ export const Documents = () => {
             </p>
           </div>
           <div className='items-center flex flex-row flex-wrap gap-3'>
-            {(documents && documents.map((item) => (
+            {(documents.map((item) => (
               <DocumentCard 
                 document={item}
                 key={item._id}
               />
             )))}
           </div>
+          <Pagination
+            className="pagination-bar mt-4"
+            currentPage={currentPage}
+            totalCount={totalDocuments}
+            pageSize={PageSize}
+            onPageChange={page => setCurrentPage(page)}
+          />
         </>
       )}
     </>

@@ -62,6 +62,7 @@ const initialState = {
     return: null,
     specializations: [],
     storages: [],
+    totalDocuments: 0,
     transactions: [],
     transaction: null,
     users: [],
@@ -424,15 +425,16 @@ const AppProvider = ({ children }) => {
   }
 
   // DOCUMENT
-  const getDocuments = async ({ limit = 0, query = ''} ) => {
+  const getDocuments = async ({ page = 0, limit = 0, query = ''} ) => {
     try {
       const { data } = await axios.get(
-        `http://localhost:3001/api/documents?limit=${limit}&${query}`,
+        `http://localhost:3001/api/documents?page=${page}&limit=${limit}&${query}`,
       )
       
       dispatch({
         type: GET_DOCUMENTS,
-        documents: data.documents
+        documents: data.documents,
+        totalDocuments: data.totalDocuments,
       })
     } catch (err) {
       let type = CODE[err.response.status]
