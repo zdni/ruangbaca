@@ -45,11 +45,11 @@ export const Documents = () => {
   return (
     <>
       {(
-        !isLoading && documents && user
+        !isLoading && documents
           &&
         <>
           {(
-            user.role === 'admin'
+            user && user.role === 'admin'
               &&
             <Link to={{pathname: DOCUMENT_FORM_LINK.path}}>
               <Button text='Tambah Dokumen' >
