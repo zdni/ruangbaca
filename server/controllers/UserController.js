@@ -95,7 +95,7 @@ class UserController {
       const {id} = req.params
       if(!id) { throw { code: 428, message: "ID_REQUIRED" } }
       if(!mongoose.Types.ObjectId.isValid(id)) { throw { code: 400, message: "INVALID_ID" } }
-      console.log(req.body)
+      
       const user = await User.findOneAndUpdate(
         { _id: id },
         req.body,

@@ -61,7 +61,6 @@ class DocumentService {
       if(publisher) data['publisher'] = publisher
       if(stock) data['stock'] = stock
       if(studentIdNumber) data['studentIdNumber'] = studentIdNumber
-      console.log(data)
       
       return {
         status: true,

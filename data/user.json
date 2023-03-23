@@ -1,0 +1,35 @@
+[
+ {
+  "idNumber": "0",
+  "name": "Administrator",
+  "username": "admin",
+  "role": "admin"
+ },
+ {
+  "classYear": 2018,
+  "idNumber": "E1E118001",
+  "name": "Mahasiswa IT 001",
+  "username": "mahasiswa001",
+  "role": "student"
+ },
+ {
+  "classYear": 2018,
+  "idNumber": "E1E118002",
+  "name": "Mahasiswa IT 002",
+  "username": "mahasiswa002",
+  "role": "student"
+ },
+ {
+  "idNumber": "20230101 230102 1 001",
+  "name": "Dosen IT 001",
+  "username": "dosen001",
+  "role": "lecture"
+ },
+ {
+  "classYear": 2018,
+  "idNumber": "20230102 230103 1 002",
+  "name": "Dosen IT 002",
+  "username": "dosen002",
+  "role": "lecture"
+ }
+]
