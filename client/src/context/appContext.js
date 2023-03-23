@@ -9,6 +9,7 @@ import {
   CLEAR_FILTERS,
   CLEAR_MODAL,
   CLEAR_STATE,
+  CONNECT_SERVER,
   DISPLAY_ALERT,
   DISPLAY_MODAL,
   GET_DOCUMENT,
@@ -149,10 +150,12 @@ const initialState = {
     url: '',
   },
   search: '',
-  status: 'pending',
+  server: {
+    status: 'not connected',
+    showAlert: false,
+  },
   user: null,
   userTypeOptions,
-  error: '',
 }
 
 const AppContext = React.createContext()
@@ -176,6 +179,27 @@ const AppProvider = ({ children }) => {
       return Promise.reject(error)
     }
   )
+
+  const connectServer = async () => {
+    try {
+      const { data } = await axios.get(
+        'http://localhost:3001/api'
+      )
+      dispatch({
+        type: CONNECT_SERVER,
+        server: {
+          status: data.message
+        }
+      })
+    } catch (err) {
+      dispatch({
+        type: CONNECT_SERVER,
+        server: {
+          status: 'not connected'
+        } 
+      })
+    }
+  }
 
   const clearState = () => {
     dispatch({ type: CLEAR_STATE })
@@ -232,14 +256,21 @@ const AppProvider = ({ children }) => {
         }
       })
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
-        alert: {
-          text: err.response.data.message,
-          type
+        alert: { 
+          text: message,
+          type 
         }
       })
     }
@@ -267,14 +298,21 @@ const AppProvider = ({ children }) => {
         }
       })
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type: 'warn'
+          text: message,
+          type 
         }
       })
     }
@@ -312,13 +350,20 @@ const AppProvider = ({ children }) => {
         storages: data.storages,
       })
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
+          text: message,
           type 
         }
       })
@@ -344,14 +389,21 @@ const AppProvider = ({ children }) => {
       
       getMasterData()
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -377,14 +429,21 @@ const AppProvider = ({ children }) => {
 
       getMasterData()
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -409,14 +468,21 @@ const AppProvider = ({ children }) => {
       
       getMasterData()
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -437,14 +503,21 @@ const AppProvider = ({ children }) => {
         totalDocuments: data.totalDocuments,
       })
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
       displayAlert()
@@ -461,14 +534,21 @@ const AppProvider = ({ children }) => {
         document: data.document
       })
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
       displayAlert()
@@ -492,14 +572,21 @@ const AppProvider = ({ children }) => {
       })
 
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -524,14 +611,21 @@ const AppProvider = ({ children }) => {
       })
 
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -554,14 +648,21 @@ const AppProvider = ({ children }) => {
       })
 
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -583,14 +684,21 @@ const AppProvider = ({ children }) => {
         penalties: data.penalties,
       })
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
       displayAlert()
@@ -609,14 +717,21 @@ const AppProvider = ({ children }) => {
         penalty: data.penalty,
       })
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
       displayAlert()
@@ -640,14 +755,21 @@ const AppProvider = ({ children }) => {
       })
       
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -673,14 +795,21 @@ const AppProvider = ({ children }) => {
 
       getTransactions({})
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -704,14 +833,21 @@ const AppProvider = ({ children }) => {
       })
       
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -734,14 +870,21 @@ const AppProvider = ({ children }) => {
       })
     
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
       displayAlert()
@@ -761,14 +904,21 @@ const AppProvider = ({ children }) => {
       })
 
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
       displayAlert()
@@ -793,14 +943,21 @@ const AppProvider = ({ children }) => {
 
       getTransactions({})
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -825,14 +982,21 @@ const AppProvider = ({ children }) => {
       })
 
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -856,14 +1020,21 @@ const AppProvider = ({ children }) => {
       })
       
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -886,14 +1057,21 @@ const AppProvider = ({ children }) => {
       })
 
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
       displayAlert()
@@ -913,14 +1091,21 @@ const AppProvider = ({ children }) => {
       })
 
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
       displayAlert()
@@ -944,14 +1129,21 @@ const AppProvider = ({ children }) => {
       })
 
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -977,14 +1169,21 @@ const AppProvider = ({ children }) => {
 
       getTransactions({})
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -1008,14 +1207,21 @@ const AppProvider = ({ children }) => {
       })
 
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -1039,14 +1245,21 @@ const AppProvider = ({ children }) => {
       })
 
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
       displayAlert()
@@ -1067,14 +1280,21 @@ const AppProvider = ({ children }) => {
       })
 
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
       displayAlert()
@@ -1097,14 +1317,21 @@ const AppProvider = ({ children }) => {
       })
 
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
       displayAlert()
@@ -1129,14 +1356,21 @@ const AppProvider = ({ children }) => {
       
       getUsers({})
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -1162,14 +1396,21 @@ const AppProvider = ({ children }) => {
       
       getUserLogin()
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -1199,14 +1440,21 @@ const AppProvider = ({ children }) => {
         logoutUser()
       }, 1500)
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
       clearModal( 'changePassword' )
@@ -1232,14 +1480,21 @@ const AppProvider = ({ children }) => {
 
       getUserLogin()
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -1263,14 +1518,21 @@ const AppProvider = ({ children }) => {
       })
       
     } catch (err) {
-      let type = CODE[err.response.status]
+      let type = ''
+      let message = ''
+      if( err.response ) {
+        type = CODE[err.response.status]
+        message = err.response.data.message
+      }
+
       if( !type ) type = 'error'
+      if( !message ) message = 'Server Error'
       
       dispatch({ 
         type: SETUP_AXIOS_ERROR,
         alert: { 
-          text: err.response.data.message,
-          type,
+          text: message,
+          type 
         }
       })
     }
@@ -1280,6 +1542,8 @@ const AppProvider = ({ children }) => {
 
   useEffect(() => {
     if(!init) {
+      connectServer()
+
       const accessToken = localStorage.getItem('accessToken')
       if( accessToken ) {
         getUserLogin()

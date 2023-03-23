@@ -8,6 +8,7 @@ import {
   CLEAR_FILTERS,
   CLEAR_MODAL,
   CLEAR_STATE,
+  CONNECT_SERVER,
   DISPLAY_ALERT,
   DISPLAY_MODAL,
   GET_DOCUMENT,
@@ -36,6 +37,16 @@ import { initialState } from './appContext'
 
 const reducer = (state, action) => {
   
+  if ( action.type === CONNECT_SERVER ) {
+    return { 
+      ...state, 
+      server: {
+        ...state.server, 
+        ...action.server,
+      } 
+    }
+  }
+
   if ( action.type === CLEAR_STATE ) {
     return { ...initialState, }
   }

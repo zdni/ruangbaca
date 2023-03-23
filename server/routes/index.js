@@ -81,4 +81,19 @@ router.post('/returns', auth(), Return.store)
 router.put('/returns/:id', auth(), Return.update)
 router.delete('/returns/:id', auth(), Return.destroy)
 
+// server
+router.get('/', function (req, res) {
+  try {
+    return res.status(200).json({
+      status: true,
+      message: 'connected'
+    })
+  } catch (err) {
+    return res.status(500).json({
+      status: false,
+      message: 'not connected'
+    })
+  }
+})
+
 export default router

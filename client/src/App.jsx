@@ -12,6 +12,7 @@ import {
   Documents,
   Home,
   MasterData,
+  NotFound,
   Transactions,
   User,
   Users,
@@ -94,6 +95,7 @@ function App() {
                     <Violations />
                   </UserGuard>
                 } />
+                <Route path="*" element={ <NotFound />} />
               </Routes>
             </div>
           </div>

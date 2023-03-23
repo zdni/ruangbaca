@@ -5,6 +5,7 @@ import { DocumentPlusIcon } from "@heroicons/react/24/outline"
 
 import { Button } from "../components/atoms"
 import { DocumentCard } from "../components/cards"
+import { NotFoundData } from "../components/NotFoundData"
 
 import { useAppContext } from '../context/appContext'
 import { DOCUMENT_FORM_LINK } from "../utils/links"
@@ -45,7 +46,7 @@ export const Documents = () => {
   return (
     <>
       {(
-        !isLoading && documents
+        !isLoading
           &&
         <>
           {(
@@ -72,8 +73,13 @@ export const Documents = () => {
               </button>
             </p>
           </div>
+          {(
+            documents.length === 0
+              &&
+            <NotFoundData />
+          )}
           <div className='items-center flex flex-row flex-wrap gap-3'>
-            {(documents.map((item) => (
+            {(documents && documents.map((item) => (
               <DocumentCard 
                 document={item}
                 key={item._id}
